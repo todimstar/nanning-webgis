@@ -1,0 +1,69 @@
+{
+  "profiles": {
+    "respiratory": {
+      "label": "呼吸道敏感",
+      "description": "适合鼻炎、哮喘、对空气污染敏感的人群。更关注空气质量、绿地与医疗便利。",
+      "weights": {
+        "airQuality": 0.45,
+        "humidityComfort": 0.15,
+        "noiseComfort": 0.1,
+        "greenSpace": 0.15,
+        "medical": 0.1,
+        "lifeConvenience": 0.05
+      }
+    },
+    "skin": {
+      "label": "皮肤敏感",
+      "description": "适合湿度、闷热、紫外线敏感的人群。更关注湿度舒适、紫外线和空气质量。",
+      "weights": {
+        "humidityComfort": 0.35,
+        "uvSafety": 0.25,
+        "airQuality": 0.2,
+        "medical": 0.1,
+        "noiseComfort": 0.05,
+        "greenSpace": 0.05
+      }
+    },
+    "sleep": {
+      "label": "睡眠浅怕吵",
+      "description": "适合睡眠浅、对夜间噪音敏感的人群。更关注噪音风险、主干道距离和夜间 POI 密度。",
+      "weights": {
+        "noiseComfort": 0.45,
+        "roadDistance": 0.2,
+        "nightPoiDensity": 0.15,
+        "airQuality": 0.1,
+        "greenSpace": 0.05,
+        "medical": 0.05
+      }
+    },
+    "general": {
+      "label": "普通宜居",
+      "description": "适合普通租住和短住评估，综合考虑空气、湿度、噪音、医疗、绿地和生活便利。",
+      "weights": {
+        "airQuality": 0.25,
+        "humidityComfort": 0.2,
+        "noiseComfort": 0.2,
+        "greenSpace": 0.15,
+        "medical": 0.1,
+        "lifeConvenience": 0.1
+      }
+    }
+  },
+  "thresholds": {
+    "excellent": 85,
+    "good": 70,
+    "normal": 55,
+    "caution": 40
+  },
+  "normalizationHints": {
+    "airQuality": "AQI 越低越好，可先用 100 - AQI 近似，限制在 0-100。",
+    "humidityComfort": "湿度 40%-60% 最舒适，过干或过湿扣分。",
+    "uvSafety": "UV 越低越安全，皮肤敏感模式需要更高权重。",
+    "noiseComfort": "100 - noiseRisk。",
+    "greenSpace": "最近公园距离越近越高。",
+    "medical": "最近医院/药店/诊所距离越近越高。",
+    "lifeConvenience": "周边餐饮、超市、便利店数量越多越高。",
+    "roadDistance": "离主干道越远越安静。",
+    "nightPoiDensity": "夜间活跃 POI 越少越安静。"
+  }
+}
