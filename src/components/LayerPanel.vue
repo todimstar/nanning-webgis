@@ -1,14 +1,37 @@
 <script setup>
 import { BASE_LAYER_OPTIONS } from '../gis/baseLayers.js';
+import { OVERLAY_LAYER_DEFS } from '../data/greenCityData.js';
 
-defineProps({
+const props = defineProps({
   baseLayerKey: {
     type: String,
     required: true,
   },
+  overlayState: {
+    type: Object,
+    required: true,
+  },
+  queryRadiusMeters: {
+    type: Number,
+    required: true,
+  },
 });
 
-const emit = defineEmits(['update:baseLayerKey']);
+const emit = defineEmits([
+  'update:baseLayerKey',
+  'update:overlayState',
+  'update:queryRadiusMeters',
+]);
+
+function updateOverlay(key, patch) {
+  emit('update:overlayState', {
+    ...props.overlayState,
+    [key]: {
+      ...props.overlayState[key],
+      ...patch,
+    },
+  });
+}
 </script>
 
 <template>
@@ -24,6 +47,50 @@ const emit = defineEmits(['update:baseLayerKey']);
       >
         {{ layer.label }}
       </button>
+    </div>
+  </section>
+
+  <section class="panel-block">
+    <h2>专题图层</h2>
+    <div class="overlay-list">
+      <label
+        v-for="layer in OVERLAY_LAYER_DEFS"
+        :key="layer.key"
+        class="overlay-row"
+      >
+        <span class="overlay-main">
+          <input
+            type="checkbox"
+            :checked="overlayState[layer.key]?.visible"
+            @change="updateOverlay(layer.key, { visible: $event.target.checked })"
+          />
+          <i :style="{ background: layer.color }"></i>
+          <strong>{{ layer.label }}</strong>
+        </span>
+        <input
+          type="range"
+          min="0.2"
+          max="1"
+          step="0.05"
+          :value="overlayState[layer.key]?.opacity ?? 0.8"
+          @input="updateOverlay(layer.key, { opacity: Number($event.target.value) })"
+        />
+      </label>
+    </div>
+  </section>
+
+  <section class="panel-block">
+    <h2>空间查询半径</h2>
+    <div class="range-row">
+      <input
+        type="range"
+        min="300"
+        max="1800"
+        step="100"
+        :value="queryRadiusMeters"
+        @input="emit('update:queryRadiusMeters', Number($event.target.value))"
+      />
+      <strong>{{ queryRadiusMeters }} m</strong>
     </div>
   </section>
 </template>

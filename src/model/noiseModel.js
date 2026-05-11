@@ -46,10 +46,10 @@ export function estimateNoise(location) {
     return sum + (distanceMeters(location, anchor) <= 1200 ? 5 : 0);
   }, 0);
 
-  const roadRisk = clamp(100 - nearestRoadMeters / 8, 0, 70);
-  const nightRisk = clamp(nightPoiCount * 4, 0, 45);
+  const roadRisk = clamp(55 - nearestRoadMeters / 18, 0, 48);
+  const nightRisk = clamp(nightPoiCount * 3.2, 0, 35);
   const quietBonus = nearestQuietMeters <= 800 ? 18 : nearestQuietMeters <= 1800 ? 8 : 0;
-  const noiseRisk = Math.round(clamp(30 + roadRisk + nightRisk - quietBonus, 5, 95));
+  const noiseRisk = Math.round(clamp(22 + roadRisk + nightRisk - quietBonus, 5, 86));
 
   return {
     noiseRisk,

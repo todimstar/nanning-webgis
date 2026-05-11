@@ -1,86 +1,43 @@
-# AGENTS.md：南宁健康宜居环境 WebGIS 项目代理说明
+# AGENTS.md：绿城知境 WebGIS 项目代理说明
 
-你是本项目的代码代理。请严格按照以下边界实现项目。
+你是本项目的代码代理。当前主方向是：
 
-## 项目目标
+> 绿城知境：面向敏感人群的南宁生态文化与健康环境 WebGIS 平台
 
-实现一个纯前端 WebGIS 应用：
+旧的“健康宜居/候选居住点”代码和文档可以作为历史参考，但新增功能、README、界面文案和验收说明都应优先服务本方向。
 
-> 基于 OpenLayers 的南宁城市健康宜居环境评估 WebGIS 系统
-
-用于课程作业和人工智能创新赛道包装。项目要能部署到 GitHub Pages，不依赖后端、不依赖数据库、不暴露任何私密 API Key。
-
-## 核心要求
+## 项目边界
 
 1. 使用 Vue 3 + Vite + OpenLayers。
-2. 使用现代 JavaScript / TypeScript 均可，优先代码清晰。
-3. 最终项目必须能 `npm install`、`npm run dev`、`npm run build`。
-4. 不要引入后端。
-5. 不要使用 MySQL、PostGIS、Express、FastAPI 等服务端依赖。
-6. 不要把任何 API Key 写死在代码里。
-7. Open-Meteo API 不需要 key，可以直接前端调用。
-8. OSM/Overpass 数据优先通过脚本抓取后保存成本地 GeoJSON，前端加载静态文件。
-9. 如果 Overpass 抓取失败，允许使用 demo-candidate-points.geojson 和手写示例数据保证功能可演示。
-10. 不要实现登录注册。
-11. 不要实现真实房源平台爬虫。
-12. 不要实现犯罪率、交通事故等敏感或难获取数据。
-13. 噪音使用“夜间噪音风险模型”，不要依赖真实噪音 API。
-14. LLM 解释使用规则式解释，不调用真实大模型 API。
+2. 保持纯前端，不引入后端、数据库、登录注册或真实大模型 API。
+3. 项目必须能 `npm install`、`npm run dev`、`npm run build`。
+4. Open-Meteo API 可直接在前端调用，不需要 API Key。
+5. OSM/Overpass 数据优先抓取后保存为本地 GeoJSON，前端加载静态文件。
+6. 抓取失败时允许使用 `public/data/` 下的演示 GeoJSON 保证可演示。
+7. 噪音使用规则式夜间噪音风险模型，不依赖真实噪音 API。
+8. 解释使用规则式“AI 解释”，不调用外部 LLM。
 
-## 建议项目目录
+## 核心数据与指标
 
-```text
-src/
-  api/
-    openMeteo.js
-  components/
-    MapView.vue
-    LayerPanel.vue
-    ToolPanel.vue
-    AnalysisPanel.vue
-    ProfileSelector.vue
-  gis/
-    baseLayers.js
-    vectorLayers.js
-    drawTools.js
-    measureTools.js
-    spatialQuery.js
-    heatmap.js
-  model/
-    scoreModel.js
-    noiseModel.js
-    explainModel.js
-  utils/
-    geoUtils.js
-    normalize.js
-  App.vue
-  main.js
-public/
-  data/
-    score-config.json
-    demo-candidate-points.geojson
-    nanning_poi.geojson
-    nanning_roads.geojson
-```
+专题图层至少覆盖：
 
-## 课程功能覆盖
+- 绿地与水系
+- 医疗与药店
+- 绿城生态文化点
+- 噪音风险点
+- 评估网格
 
-必须尽量覆盖：
+评分指标至少覆盖：
 
-- 多源地图加载：至少 3 种底图
-- 缩放、平移、复位、全屏
-- 图层管理：显示/隐藏、透明度
-- 比例尺、鼠标坐标、鹰眼
-- 绘制工具：点、线、面、圆、矩形
-- 要素编辑与删除
-- 测距、测面积
-- 标注和信息弹窗
-- 地图截图/导出
-- 空间查询：点选、框选、圆选
-- 属性查询：按评分、AQI、噪音风险筛选
-- 空间分析：缓冲区、叠加/范围统计
-- 热力图
-- 动态数据可视化：未来 24 小时空气/湿度趋势
+- airQuality：空气质量
+- humidityComfort：湿度舒适
+- uvSafety：紫外线安全
+- noiseComfort：噪音舒适
+- greenSpace：绿地便利
+- cultureAccess：生态文化可达
+- medical：医疗便利
+- roadDistance：道路噪音距离
+- nightPoiDensity：夜间安静度
 
 ## 用户画像
 
@@ -91,52 +48,26 @@ public/
 3. 睡眠浅怕吵
 4. 普通宜居
 
-每种画像读取 `score-config.json` 里的权重。
+每种画像读取 `score-config.json` 的权重，综合评分为指标分与权重的加权结果。
 
-## 评分逻辑
+## WebGIS 功能目标
 
-每个指标归一化到 0-100：
+初版已覆盖地图、底图、专题图层、点击评估、半径统计和规则解释。后续补齐时优先实现：
 
-- airQuality：空气质量分
-- humidityComfort：湿度舒适分
-- uvSafety：紫外线安全分
-- noiseComfort：噪音舒适分
-- greenSpace：绿地便利分
-- medical：医疗便利分
-- lifeConvenience：生活便利分
-- roadDistance：道路噪音距离分
-- nightPoiDensity：夜间娱乐密度分
-
-综合评分：
-
-```text
-综合评分 = Σ 指标分 × 用户画像权重
-```
-
-## 解释逻辑
-
-不要只输出分数。必须输出类似：
-
-```text
-该位置对“呼吸道敏感”用户的适宜度为 82 分。
-优势：PM2.5 较低，周边有公园，医疗设施距离较近。
-风险：湿度偏高，夏季可能存在闷热潮湿感。
-建议：适合作为候选居住区域，但建议避开临近主干道的楼栋。
-```
+- 绘制点、线、面、圆、矩形
+- 要素编辑与删除
+- 距离测量、面积测量
+- 点选、框选、圆选、属性查询
+- 缓冲区分析、叠加/范围统计
+- 热力图与动态趋势可视化
+- 地图截图和摘要导出
 
 ## UI 结构
 
-推荐三栏：
+保持三栏结构：
 
-- 左侧：工具栏、图层控制、用户画像选择
+- 左侧：用户画像、底图、图层控制、查询半径和工具入口
 - 中间：OpenLayers 地图
-- 右侧：环境指标、综合评分、AI解释、趋势图
+- 右侧：环境指标、空间统计、综合评分、规则式解释和趋势图
 
-## 实现顺序
-
-第一步：MVP  
-第二步：课程功能补齐  
-第三步：视觉美化  
-第四步：报告和演示友好化
-
-不要一次性生成超大代码。每一步生成后都要保证可运行。
+不要一次性生成超大代码。每一步完成后运行构建或相应验证，保证可运行再继续。

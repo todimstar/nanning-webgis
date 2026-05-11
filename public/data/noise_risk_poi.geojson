@@ -1,0 +1,32 @@
+{
+  "type": "FeatureCollection",
+  "name": "noise_risk_poi_demo",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "示例主干道节点",
+        "category": "主干道",
+        "riskType": "traffic",
+        "riskWeight": 30
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [108.3600, 22.8160]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "示例夜间娱乐点",
+        "category": "夜间娱乐",
+        "riskType": "nightlife",
+        "riskWeight": 25
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [108.3740, 22.8135]
+      }
+    }
+  ]
+}

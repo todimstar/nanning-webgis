@@ -1,95 +1,17 @@
-# 南宁健康宜居环境 WebGIS：Codex 项目启动包
+# 绿城知境 WebGIS
 
-这个启动包用于投喂给 Codex / Cursor / Claude Code 等 vibecoding 工具，目标是让它们基于明确的产品边界和数据方案，生成一个可静态部署的 WebGIS 课程项目。
+面向敏感人群的南宁生态文化与健康环境 WebGIS 平台。项目使用 Vue 3 + Vite + OpenLayers 实现，保持纯前端架构，适合课程作业展示、GitHub Pages 部署和后续逐步补齐 WebGIS 工具链。
 
-## 项目定位
+## 当前方向
 
-课程项目名称：
+本分支以“绿城知境”为主方向，不再沿用仓库旧的居住候选点选题叙事。旧代码和文档仅作为历史参考，本分支优先实现：
 
-> 基于 OpenLayers 的南宁城市健康宜居环境评估 WebGIS 系统
-
-参赛包装名称：
-
-> 宜居知境：面向敏感体质人群的 AI 城市微环境评估平台
-
-核心场景：
-
-> 用户点击南宁地图上的某个位置，系统结合天气、空气质量、紫外线、周边道路/POI、噪音风险模型和用户画像，输出该位置对“呼吸道敏感、皮肤敏感、睡眠浅怕吵、普通宜居”等人群的适宜度评分和解释。
-
-## 推荐开发技术栈
-
-- Vue 3 + Vite
-- OpenLayers 8.x 或 10.x
-- Turf.js
-- ECharts
-- html2canvas
-- 纯前端，无后端
-- 可部署到 GitHub Pages
-
-## 这个包里有什么
-
-```text
-.codex/SKILL.md                         给 Codex 的项目技能说明
-AGENTS.md                               给 Codex/代码代理的最高优先级项目说明
-prompts/CODEX_MASTER_PROMPT.md          一键投喂 Codex 的完整提示词
-docs/01_PROJECT_BRIEF.md                项目需求说明
-docs/02_API_AND_DATA_PLAN.md            API 与数据方案
-docs/03_OVERPASS_GUIDE.md               Overpass 抓取说明与查询模板
-docs/04_SCORING_MODEL.md                综合评分模型说明
-docs/05_FEATURES_TO_REQUIREMENTS.md     课程要求对应表
-docs/06_ACCEPTANCE_CHECKLIST.md         验收清单
-docs/07_REPORT_OUTLINE.md               课设报告大纲
-data/score-config.json                  用户画像权重配置
-data/demo-candidate-points.geojson      示例候选居住点
-scripts/fetch-overpass-nanning.mjs      可选：Node.js 抓取南宁 OSM 数据脚本
-```
-
-## 给你的操作方式
-
-最省事方式：
-
-1. 把整个文件夹扔进新项目根目录。
-2. 打开 `prompts/CODEX_MASTER_PROMPT.md`。
-3. 把里面的内容复制给 Codex。
-4. 让 Codex 先生成项目目录和 MVP。
-5. 再让 Codex 逐步完成验收清单。
-
-## 开发策略
-
-先做 MVP，不要一开始追求大而全。
-
-第一阶段只要求：
-
-- 地图能显示南宁
-- 至少 3 个底图
-- 点击地图能调用 Open-Meteo 天气和空气质量 API
-- 右侧面板显示指标
-- 能按用户画像生成综合评分和解释
-
-第二阶段再加：
-
-- POI 图层
-- 道路/噪音风险模型
-- 绘制、测量、查询、热力图、截图导出
-
-第三阶段再包装成：
-
-- AI 城市微环境评估平台
-- 支持敏感体质/睡眠浅/普通宜居等场景
-- 演示视频和课设报告
-
-## 当前已实现：阶段 1 MVP
-
-本仓库现在已经补齐 Vue 3 + Vite + OpenLayers 的第一阶段可运行版本：
-
-- 地图默认定位南宁市中心，经纬度 `108.3669, 22.8170`。
-- 支持 OSM 标准、高德标准、Esri 影像 3 种底图切换；高德底图使用 GCJ-02 显示校正，避免标点偏移。
-- 页面采用三栏结构：左侧画像和底图，中间地图，右侧环境评估结果。
-- 点击地图会请求 Open-Meteo 天气 API 和空气质量 API。
-- 右侧显示温度、湿度、风速、PM2.5、PM10、AQI、UV、噪音风险。
-- 从 `public/data/score-config.json` 读取 4 类用户画像权重。
-- 使用规则式评分模型生成综合适宜度和自然语言解释。
-- Open-Meteo 请求失败时会降级到本地示例环境数据，页面不会崩溃。
+- 南宁三种公开底图：OSM 标准、Esri 影像、CARTO 深色。
+- 绿地与水系、医疗与药店、噪音风险点、绿城生态文化点、评估网格 5 类专题图层。
+- 图层显示/隐藏、透明度调整、空间查询半径调整。
+- 点击地图获取 Open-Meteo 天气和空气质量数据。
+- 按呼吸道敏感、皮肤敏感、睡眠浅、普通宜居 4 种画像计算综合适宜度。
+- 结合周边生态文化、绿地、医疗和噪音风险生成规则式解释。
 
 ## 本地运行
 
@@ -99,12 +21,23 @@ npm run dev
 npm run build
 ```
 
-开发服务器启动后，浏览器访问终端提示的本地地址，例如：
+开发服务器启动后访问终端提示的本地地址，例如 `http://127.0.0.1:5173/`。
 
-```text
-http://127.0.0.1:5173/
-```
+## 数据来源
 
-## 第一阶段边界
+初版使用 `public/data/` 下的演示 GeoJSON 保证可演示：
 
-当前阶段只保证核心演示链路跑通：地图、底图切换、点击评估、评分、解释。POI 图层、道路图层、绘制、测量、查询、热力图、截图导出等课程工具留到第二阶段继续补齐。
+- `green_spaces.geojson`
+- `medical_services.geojson`
+- `culture_green_points.geojson`
+- `noise_risk_poi.geojson`
+- `demo_grid.geojson`
+
+后续可以用 `scripts/fetch-overpass-nanning.mjs` 或 Overpass 查询结果替换为更完整的南宁 OSM 静态数据。
+
+## 下一阶段
+
+- 绘制、编辑、删除、测距、测面积。
+- 框选、圆选、属性过滤和缓冲区统计。
+- 热力图和更完整的动态趋势图。
+- 地图截图导出和课程报告展示材料。

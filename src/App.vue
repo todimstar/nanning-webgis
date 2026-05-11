@@ -7,16 +7,23 @@ import AnalysisPanel from './components/AnalysisPanel.vue';
 import { fetchEnvironment, getFallbackEnvironment } from './api/openMeteo.js';
 import { DEFAULT_SCORE_CONFIG, computeAssessment } from './model/scoreModel.js';
 import { buildExplanation } from './model/explainModel.js';
-
-const NANNING_CENTER = { lon: 108.3669, lat: 22.817 };
+import {
+  NANNING_CENTER,
+  createDefaultOverlayState,
+  loadGreenCityCollections,
+} from './data/greenCityData.js';
 
 const scoreConfig = ref(DEFAULT_SCORE_CONFIG);
-const selectedProfile = ref('respiratory');
+const selectedProfile = ref('general');
 const selectedLocation = ref(NANNING_CENTER);
 const environment = ref(null);
+const greenCityData = ref({});
+const selectedFeature = ref(null);
 const loading = ref(false);
 const apiError = ref('');
 const baseLayerKey = ref('osm');
+const overlayState = ref(createDefaultOverlayState());
+const queryRadiusMeters = ref(900);
 
 const assessment = computed(() => {
   if (!environment.value) return null;
@@ -25,6 +32,8 @@ const assessment = computed(() => {
     location: selectedLocation.value,
     profileKey: selectedProfile.value,
     config: scoreConfig.value,
+    greenCityData: greenCityData.value,
+    radiusMeters: queryRadiusMeters.value,
   });
 });
 
@@ -50,6 +59,7 @@ async function loadScoreConfig() {
 
 async function evaluateLocation(location) {
   selectedLocation.value = location;
+  selectedFeature.value = null;
   loading.value = true;
   apiError.value = '';
 
@@ -64,8 +74,17 @@ async function evaluateLocation(location) {
   }
 }
 
+async function loadLayerData() {
+  try {
+    greenCityData.value = await loadGreenCityCollections();
+  } catch (error) {
+    console.warn('静态图层数据加载失败：', error);
+    greenCityData.value = {};
+  }
+}
+
 onMounted(async () => {
-  await loadScoreConfig();
+  await Promise.all([loadScoreConfig(), loadLayerData()]);
   await evaluateLocation(NANNING_CENTER);
 });
 </script>
@@ -74,8 +93,8 @@ onMounted(async () => {
   <div class="app-shell">
     <aside class="side-panel left-panel">
       <div class="brand">
-        <p class="eyebrow">南宁 WebGIS MVP</p>
-        <h1>健康宜居环境评估</h1>
+        <p class="eyebrow">绿城知境 WebGIS</p>
+        <h1>南宁生态文化与健康环境评估</h1>
       </div>
 
       <ProfileSelector
@@ -83,15 +102,19 @@ onMounted(async () => {
         :profiles="scoreConfig.profiles"
       />
 
-      <LayerPanel v-model:base-layer-key="baseLayerKey" />
+      <LayerPanel
+        v-model:base-layer-key="baseLayerKey"
+        v-model:overlay-state="overlayState"
+        v-model:query-radius-meters="queryRadiusMeters"
+      />
 
       <section class="panel-block">
-        <h2>阶段范围</h2>
+        <h2>初版能力</h2>
         <ul class="scope-list">
-          <li>OpenLayers 定位南宁</li>
-          <li>三种公开底图切换</li>
-          <li>点击地图获取 Open-Meteo 数据</li>
-          <li>按画像计算评分并解释</li>
+          <li>南宁三底图切换与复位、比例尺、坐标、鹰眼</li>
+          <li>绿地、水系、医疗、噪音风险、生态文化点图层</li>
+          <li>点击地图后读取 Open-Meteo 并统计周边要素</li>
+          <li>按敏感人群模式输出评分、风险和绿城解释</li>
         </ul>
       </section>
     </aside>
@@ -99,8 +122,11 @@ onMounted(async () => {
     <main class="map-region">
       <MapView
         :base-layer-key="baseLayerKey"
+        :overlay-state="overlayState"
         :selected-location="selectedLocation"
+        :query-radius-meters="queryRadiusMeters"
         @location-selected="evaluateLocation"
+        @feature-selected="selectedFeature = $event"
       />
     </main>
 
@@ -110,6 +136,8 @@ onMounted(async () => {
         :environment="environment"
         :assessment="assessment"
         :explanation="explanation"
+        :selected-feature="selectedFeature"
+        :query-radius-meters="queryRadiusMeters"
         :loading="loading"
         :api-error="apiError"
       />

@@ -1,0 +1,32 @@
+{
+  "type": "FeatureCollection",
+  "name": "medical_services_demo",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "示例药店 A",
+        "category": "药店",
+        "serviceType": "medical",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [108.3710, 22.8195]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "示例医院 B",
+        "category": "医院",
+        "serviceType": "medical",
+        "supportScore": 88
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [108.3570, 22.8240]
+      }
+    }
+  ]
+}

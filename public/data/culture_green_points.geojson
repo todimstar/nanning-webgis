@@ -1,0 +1,20 @@
+{
+  "type": "FeatureCollection",
+  "name": "culture_green_points_demo",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "绿城生活示例点 A",
+        "category": "绿城生态文化点",
+        "tags": ["绿城", "生活方式", "日常生态"],
+        "cultureText": "占位演示数据：用于表达南宁绿城生态文化与居民日常生活的关系。",
+        "score": 85
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [108.3640, 22.8080]
+      }
+    }
+  ]
+}

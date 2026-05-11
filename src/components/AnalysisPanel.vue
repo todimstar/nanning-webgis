@@ -18,6 +18,14 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  selectedFeature: {
+    type: Object,
+    default: null,
+  },
+  queryRadiusMeters: {
+    type: Number,
+    required: true,
+  },
   loading: {
     type: Boolean,
     default: false,
@@ -96,6 +104,14 @@ const trendMax = computed(() => {
           <strong>{{ valueOrDash(environment.air.aqi) }}</strong>
         </article>
         <article>
+          <span>NO2</span>
+          <strong>{{ valueOrDash(environment.air.no2, ' μg/m³') }}</strong>
+        </article>
+        <article>
+          <span>O3</span>
+          <strong>{{ valueOrDash(environment.air.ozone, ' μg/m³') }}</strong>
+        </article>
+        <article>
           <span>UV</span>
           <strong>{{ valueOrDash(environment.air.uvIndex) }}</strong>
         </article>
@@ -104,6 +120,39 @@ const trendMax = computed(() => {
           <strong>{{ assessment.noise.noiseRisk }}</strong>
         </article>
       </div>
+
+      <section class="data-block">
+        <h2>{{ queryRadiusMeters }} 米空间查询</h2>
+        <div class="nearby-grid">
+          <article>
+            <span>绿地/水系</span>
+            <strong>{{ assessment.nearby.greenStats.count }}</strong>
+            <small>最近 {{ assessment.nearby.greenStats.nearestName || '--' }}</small>
+          </article>
+          <article>
+            <span>医疗服务</span>
+            <strong>{{ assessment.nearby.medicalStats.count }}</strong>
+            <small>最近 {{ assessment.nearby.medicalStats.nearestName || '--' }}</small>
+          </article>
+          <article>
+            <span>生态文化点</span>
+            <strong>{{ assessment.nearby.cultureStats.count }}</strong>
+            <small>最近 {{ assessment.nearby.cultureStats.nearestName || '--' }}</small>
+          </article>
+          <article>
+            <span>噪音风险点</span>
+            <strong>{{ assessment.nearby.noiseStats.count }}</strong>
+            <small>最近 {{ assessment.nearby.noiseStats.nearestName || '--' }}</small>
+          </article>
+        </div>
+      </section>
+
+      <section v-if="selectedFeature" class="data-block feature-block">
+        <h2>点选要素</h2>
+        <p><strong>{{ selectedFeature.name }}</strong> · {{ selectedFeature.category }}</p>
+        <p v-if="selectedFeature.cultureText">{{ selectedFeature.cultureText }}</p>
+        <p v-if="selectedFeature.score !== null">示例评分：{{ selectedFeature.score }}</p>
+      </section>
 
       <section class="data-block">
         <h2>指标评分</h2>

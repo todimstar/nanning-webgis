@@ -1,0 +1,24 @@
+{
+  "type": "FeatureCollection",
+  "name": "demo_grid",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "演示网格 01",
+        "category": "评估网格",
+        "score": 80
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [108.3500, 22.8050],
+          [108.3800, 22.8050],
+          [108.3800, 22.8300],
+          [108.3500, 22.8300],
+          [108.3500, 22.8050]
+        ]]
+      }
+    }
+  ]
+}

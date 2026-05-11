@@ -170,6 +170,52 @@ h2 {
   color: white;
 }
 
+.overlay-list {
+  display: grid;
+  gap: 12px;
+}
+
+.overlay-row {
+  display: grid;
+  gap: 7px;
+  padding: 10px;
+  border: 1px solid #d8e4f4;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.overlay-main {
+  display: grid;
+  grid-template-columns: 16px 12px 1fr;
+  gap: 8px;
+  align-items: center;
+  color: #26362f;
+}
+
+.overlay-main i {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85), 0 0 0 3px rgba(15, 23, 42, 0.08);
+}
+
+.overlay-row input[type="range"],
+.range-row input[type="range"] {
+  width: 100%;
+}
+
+.range-row {
+  display: grid;
+  grid-template-columns: 1fr 70px;
+  gap: 10px;
+  align-items: center;
+}
+
+.range-row strong {
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+}
+
 .scope-list {
   display: grid;
   gap: 8px;
@@ -319,7 +365,8 @@ h2 {
   gap: 8px;
 }
 
-.metric-grid article {
+.metric-grid article,
+.nearby-grid article {
   min-height: 68px;
   padding: 9px 10px;
   border: 1px solid #d8e4f4;
@@ -328,17 +375,34 @@ h2 {
 }
 
 .metric-grid span,
-.bar-row span {
+.bar-row span,
+.nearby-grid span {
   display: block;
   color: var(--color-muted);
   font-size: 12px;
 }
 
-.metric-grid strong {
+.metric-grid strong,
+.nearby-grid strong {
   display: block;
   margin-top: 6px;
   font-size: 17px;
   font-variant-numeric: tabular-nums;
+}
+
+.nearby-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.nearby-grid small {
+  display: block;
+  margin-top: 5px;
+  color: var(--color-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .data-block {
@@ -467,6 +531,11 @@ h2 {
   background: #fffaf2;
 }
 
+.feature-block {
+  border-color: #bbf7d0;
+  background: #f5fff7;
+}
+
 @media (max-width: 1100px) {
   .app-shell {
     grid-template-columns: 280px minmax(0, 1fr);
@@ -493,7 +562,8 @@ h2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .metric-grid {
+  .metric-grid,
+  .nearby-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -525,7 +595,8 @@ h2 {
   }
 
   .analysis,
-  .metric-grid {
+  .metric-grid,
+  .nearby-grid {
     grid-template-columns: 1fr;
   }
 }
