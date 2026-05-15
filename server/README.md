@@ -11,6 +11,12 @@ copy .env.example .env
 npm run start
 ```
 
+本机开发时，如果 `server/.env` 未配置 `AMAP_WEB_SERVICE_KEY`，后端会自动尝试读取以下未纳入 Git 的本地文件：
+
+- `server/高德key.txt`
+- 仓库根目录 `高德key.txt`
+- 仓库上一级目录 `高德key.txt`
+
 常用接口：
 
 - `GET /health`

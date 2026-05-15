@@ -41,6 +41,8 @@ VITE_API_BASE_URL=http://127.0.0.1:8787
 
 后端环境变量见 `server/.env.example`。真实的 `高德key.txt`、`.env` 和 `.env.local` 不应提交。
 
+为了方便本机演示，后端在未配置 `server/.env` 时会自动尝试读取仓库旁边的 `高德key.txt`；队友分发时建议给他们单独的 `server/.env`，不要把 key 放进 Git。
+
 ## 数据来源
 
 初版使用 `public/data/` 下的静态 GeoJSON 保证可演示：

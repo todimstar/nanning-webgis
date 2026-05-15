@@ -4,6 +4,8 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const serverRoot = path.resolve(__dirname, '..');
+const repoRoot = path.resolve(serverRoot, '..');
+const packageRoot = path.resolve(repoRoot, '..');
 
 function loadDotEnv() {
   const envPath = path.join(serverRoot, '.env');
@@ -23,9 +25,24 @@ function loadDotEnv() {
 
 loadDotEnv();
 
+function readFirstExistingSecret(paths) {
+  for (const secretPath of paths) {
+    if (!fs.existsSync(secretPath)) continue;
+    const value = fs.readFileSync(secretPath, 'utf8').trim();
+    if (value) return value;
+  }
+  return '';
+}
+
 export const config = {
   port: Number(process.env.PORT || 8787),
-  amapKey: process.env.AMAP_WEB_SERVICE_KEY || '',
+  amapKey:
+    process.env.AMAP_WEB_SERVICE_KEY ||
+    readFirstExistingSecret([
+      path.join(serverRoot, '高德key.txt'),
+      path.join(repoRoot, '高德key.txt'),
+      path.join(packageRoot, '高德key.txt'),
+    ]),
   ai: {
     baseUrl: (process.env.AI_API_BASE_URL || 'https://api.openai.com').replace(/\/$/, ''),
     key: process.env.AI_API_KEY || '',
