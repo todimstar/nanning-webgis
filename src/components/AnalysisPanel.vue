@@ -205,7 +205,7 @@ async function exportHtmlReport() {
         <h2>点选要素</h2>
         <p><strong>{{ selectedFeature.name }}</strong> · {{ selectedFeature.category }}</p>
         <p v-if="selectedFeature.cultureText">{{ selectedFeature.cultureText }}</p>
-        <p v-if="selectedFeature.score !== null">示例评分：{{ selectedFeature.score }}</p>
+        <p v-if="selectedFeature.score !== null">参考评分：{{ selectedFeature.score }}</p>
       </section>
 
       <section v-if="toolResult" class="data-block tool-result-block">

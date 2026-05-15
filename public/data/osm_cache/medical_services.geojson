@@ -1,0 +1,5571 @@
+{
+  "type": "FeatureCollection",
+  "name": "medical_services",
+  "metadata": {
+    "generatedAt": "2026-05-11T22:24:03.641Z",
+    "source": "OpenStreetMap via Overpass API",
+    "description": "OSM/Overpass hospitals, clinics and pharmacies in Nanning"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "node/4467967089",
+      "properties": {
+        "name": "南宁市中医医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "node",
+        "osmId": 4467967089,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3135077,
+          22.8180965
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343005421",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343005421,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3327691,
+          22.8241436
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343005428",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343005428,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3228208,
+          22.8180322
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343005757",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343005757,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3341511,
+          22.8251274
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343005763",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343005763,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3302077,
+          22.8219857
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343005767",
+      "properties": {
+        "name": "诊所 clinic",
+        "category": "诊所",
+        "tags": [
+          "amenity:clinic"
+        ],
+        "osmType": "node",
+        "osmId": 6343005767,
+        "osmSource": "overpass",
+        "serviceType": "clinic",
+        "supportScore": 84
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3323877,
+          22.8190549
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343010605",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343010605,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3195372,
+          22.8257468
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343010608",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343010608,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3279,
+          22.8242807
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343010645",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343010645,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3199881,
+          22.832912
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343010648",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343010648,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3254013,
+          22.8384977
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343010653",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343010653,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.316443,
+          22.8339558
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343010659",
+      "properties": {
+        "name": "Yx-pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343010659,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3136187,
+          22.8261929
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343010663",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343010663,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3402057,
+          22.8322455
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343010715",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343010715,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3137965,
+          22.8172981
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343010723",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343010723,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3161929,
+          22.8198826
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343010727",
+      "properties": {
+        "name": "老百姓大药房",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343010727,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.315163,
+          22.823769
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343010730",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343010730,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3153332,
+          22.8248271
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343010732",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343010732,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3154823,
+          22.8249045
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343010733",
+      "properties": {
+        "name": "Yx pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343010733,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3159861,
+          22.8255094
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343011854",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343011854,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3232613,
+          22.8372729
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343012100",
+      "properties": {
+        "name": "Xing ning qu yun de community health service",
+        "category": "诊所",
+        "tags": [
+          "amenity:clinic"
+        ],
+        "osmType": "node",
+        "osmId": 6343012100,
+        "osmSource": "overpass",
+        "serviceType": "clinic",
+        "supportScore": 84
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3186142,
+          22.8274104
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343012102",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343012102,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3175462,
+          22.8284693
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343012130",
+      "properties": {
+        "name": "医院 hospital",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "node",
+        "osmId": 6343012130,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3163487,
+          22.8290694
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343012133",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343012133,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3397903,
+          22.8333691
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343012152",
+      "properties": {
+        "name": "诊所 clinic",
+        "category": "诊所",
+        "tags": [
+          "amenity:clinic"
+        ],
+        "osmType": "node",
+        "osmId": 6343012152,
+        "osmSource": "overpass",
+        "serviceType": "clinic",
+        "supportScore": 84
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3588643,
+          22.8585074
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343012155",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343012155,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3559616,
+          22.8585684
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343012157",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343012157,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.354883,
+          22.8591052
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343012160",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343012160,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.333038,
+          22.853794
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343012165",
+      "properties": {
+        "name": "康全药业(南宁共济分店)",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343012165,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3252505,
+          22.8463275
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343012179",
+      "properties": {
+        "name": "医院 hospital",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "node",
+        "osmId": 6343012179,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.359381,
+          22.7979819
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343012183",
+      "properties": {
+        "name": "医院 hospital",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "node",
+        "osmId": 6343012183,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3430892,
+          22.8107231
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343013892",
+      "properties": {
+        "name": "Kang quan",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343013892,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3184444,
+          22.8268539
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343013910",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343013910,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3207977,
+          22.8359237
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343013923",
+      "properties": {
+        "name": "诊所 clinic",
+        "category": "诊所",
+        "tags": [
+          "amenity:clinic"
+        ],
+        "osmType": "node",
+        "osmId": 6343013923,
+        "osmSource": "overpass",
+        "serviceType": "clinic",
+        "supportScore": 84
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3588106,
+          22.8586782
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343013928",
+      "properties": {
+        "name": "国大药房(地洞口店)",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343013928,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3244696,
+          22.8458907
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343013935",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343013935,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3388478,
+          22.8263885
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343014194",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343014194,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3317414,
+          22.8235014
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343023795",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343023795,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3360024,
+          22.8267504
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343023798",
+      "properties": {
+        "name": "诊所 clinic",
+        "category": "诊所",
+        "tags": [
+          "amenity:clinic"
+        ],
+        "osmType": "node",
+        "osmId": 6343023798,
+        "osmSource": "overpass",
+        "serviceType": "clinic",
+        "supportScore": 84
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3348972,
+          22.8257669
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343026398",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343026398,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3383109,
+          22.8285348
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343026401",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343026401,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3171699,
+          22.8281939
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343026424",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343026424,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3219284,
+          22.8365253
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343026432",
+      "properties": {
+        "name": "诊所 clinic",
+        "category": "诊所",
+        "tags": [
+          "amenity:clinic"
+        ],
+        "osmType": "node",
+        "osmId": 6343026432,
+        "osmSource": "overpass",
+        "serviceType": "clinic",
+        "supportScore": 84
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3168062,
+          22.8341075
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343026441",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343026441,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3223526,
+          22.8383175
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343026476",
+      "properties": {
+        "name": "友和古城大药房",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343026476,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3416295,
+          22.8240095
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343028389",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343028389,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3161757,
+          22.8277073
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343047789",
+      "properties": {
+        "name": "桂中大药房",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343047789,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3401439,
+          22.8252403
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343047790",
+      "properties": {
+        "name": "一心医药",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343047790,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3400221,
+          22.8253282
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343047792",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343047792,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3382591,
+          22.8266728
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/6343048488",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 6343048488,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3275317,
+          22.8240222
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/7180434027",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 7180434027,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3120802,
+          22.8251575
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/9266288514",
+      "properties": {
+        "name": "蒲津社区卫生服务中心",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "node",
+        "osmId": 9266288514,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.4903354,
+          22.7463065
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/9269206548",
+      "properties": {
+        "name": "新兴社区卫生服务中心",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "node",
+        "osmId": 9269206548,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.4864996,
+          22.7572975
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/9289777258",
+      "properties": {
+        "name": "良庆镇卫生院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "node",
+        "osmId": 9289777258,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.4107608,
+          22.749921
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/9322711107",
+      "properties": {
+        "name": "银龙社区卫生服务中心",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "node",
+        "osmId": 9322711107,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.4530137,
+          22.7566083
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/9333389181",
+      "properties": {
+        "name": "广西中医药大学第一附属医院（仁爱分院）",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "node",
+        "osmId": 9333389181,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3137619,
+          22.8451701
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/9363978729",
+      "properties": {
+        "name": "南宁市第二人民医院良庆医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "node",
+        "osmId": 9363978729,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3420342,
+          22.7343309
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/9433494284",
+      "properties": {
+        "name": "石柱岭社区卫生服务中心",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "node",
+        "osmId": 9433494284,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3013049,
+          22.7876313
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/9687527538",
+      "properties": {
+        "name": "南宁市兴宁区第二人民医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "node",
+        "osmId": 9687527538,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.4140607,
+          22.8798167
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/12388234507",
+      "properties": {
+        "name": "广西医科大学附属口腔医院(五象院区)",
+        "category": "诊所",
+        "tags": [
+          "amenity:clinic"
+        ],
+        "osmType": "node",
+        "osmId": 12388234507,
+        "osmSource": "overpass",
+        "serviceType": "clinic",
+        "supportScore": 84
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3849388,
+          22.7520151
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13240619216",
+      "properties": {
+        "name": "广西爱思特整形外科医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "node",
+        "osmId": 13240619216,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.4162437,
+          22.8131243
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13243286146",
+      "properties": {
+        "name": "平岭社区卫生服务中心",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "node",
+        "osmId": 13243286146,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.4164011,
+          22.8034826
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13275562396",
+      "properties": {
+        "name": "医院 hospital",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "node",
+        "osmId": 13275562396,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3110264,
+          22.8244921
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13275647829",
+      "properties": {
+        "name": "医院 hospital",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "node",
+        "osmId": 13275647829,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3105633,
+          22.8247888
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13512799353",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 13512799353,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.437997,
+          22.7715162
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13529443684",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 13529443684,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.4975626,
+          22.8042223
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13619396802",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 13619396802,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.323196,
+          22.825866
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13620096401",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 13620096401,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3226635,
+          22.8287238
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13622276303",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 13622276303,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3317539,
+          22.8201711
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13622279103",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 13622279103,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3324773,
+          22.8165582
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13622292803",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 13622292803,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3185728,
+          22.8212795
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13622338501",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 13622338501,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3199561,
+          22.8193219
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13622342101",
+      "properties": {
+        "name": "Nanning bright eye hospital",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "node",
+        "osmId": 13622342101,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3394439,
+          22.8152269
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13624556602",
+      "properties": {
+        "name": "Gncy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 13624556602,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3143708,
+          22.8249082
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13624560903",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 13624560903,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3212454,
+          22.8330872
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13631245004",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 13631245004,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3106672,
+          22.8254737
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13631245005",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 13631245005,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.310797,
+          22.8254595
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13631245403",
+      "properties": {
+        "name": "药店 pharmacy",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 13631245403,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.3107643,
+          22.8249961
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13680958427",
+      "properties": {
+        "name": "一心大药房",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 13680958427,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.4531408,
+          22.7776448
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13680958428",
+      "properties": {
+        "name": "桂中大药房",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 13680958428,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.4503494,
+          22.7788493
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13680960837",
+      "properties": {
+        "name": "健之佳",
+        "category": "药店",
+        "tags": [
+          "amenity:pharmacy"
+        ],
+        "osmType": "node",
+        "osmId": 13680960837,
+        "osmSource": "overpass",
+        "serviceType": "pharmacy",
+        "supportScore": 76
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.4468185,
+          22.7797356
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/13680972877",
+      "properties": {
+        "name": "杨一鸣诊所",
+        "category": "诊所",
+        "tags": [
+          "amenity:clinic"
+        ],
+        "osmType": "node",
+        "osmId": 13680972877,
+        "osmSource": "overpass",
+        "serviceType": "clinic",
+        "supportScore": 84
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.4481741,
+          22.7800253
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/477305833",
+      "properties": {
+        "name": "南宁市红十字会医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 477305833,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.308172,
+              22.8179228
+            ],
+            [
+              108.3089389,
+              22.8182393
+            ],
+            [
+              108.3094161,
+              22.8173967
+            ],
+            [
+              108.3090058,
+              22.8171336
+            ],
+            [
+              108.308823,
+              22.8175364
+            ],
+            [
+              108.3084217,
+              22.8173474
+            ],
+            [
+              108.308172,
+              22.8179228
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/553196019",
+      "properties": {
+        "name": "广西民族医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 553196019,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.315008,
+              22.8483803
+            ],
+            [
+              108.3153908,
+              22.8476136
+            ],
+            [
+              108.3154036,
+              22.8475025
+            ],
+            [
+              108.3153804,
+              22.8474076
+            ],
+            [
+              108.3153373,
+              22.8473125
+            ],
+            [
+              108.3155746,
+              22.8466936
+            ],
+            [
+              108.3142879,
+              22.8463033
+            ],
+            [
+              108.3139002,
+              22.8473384
+            ],
+            [
+              108.3141606,
+              22.847439
+            ],
+            [
+              108.3142153,
+              22.8474849
+            ],
+            [
+              108.314232,
+              22.8475568
+            ],
+            [
+              108.3142133,
+              22.8477135
+            ],
+            [
+              108.3145571,
+              22.8478358
+            ],
+            [
+              108.3144186,
+              22.8482115
+            ],
+            [
+              108.315008,
+              22.8483803
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/759170267",
+      "properties": {
+        "name": "校医院",
+        "category": "诊所",
+        "tags": [
+          "amenity:clinic"
+        ],
+        "osmType": "way",
+        "osmId": 759170267,
+        "osmSource": "overpass",
+        "serviceType": "clinic",
+        "supportScore": 84
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.2918971,
+              22.844915
+            ],
+            [
+              108.2920258,
+              22.8449437
+            ],
+            [
+              108.2922926,
+              22.8450032
+            ],
+            [
+              108.2923354,
+              22.8448404
+            ],
+            [
+              108.2924245,
+              22.8448603
+            ],
+            [
+              108.292456,
+              22.8447404
+            ],
+            [
+              108.2919714,
+              22.8446323
+            ],
+            [
+              108.2918971,
+              22.844915
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/759340886",
+      "properties": {
+        "name": "西校园门诊部",
+        "category": "诊所",
+        "tags": [
+          "amenity:clinic"
+        ],
+        "osmType": "way",
+        "osmId": 759340886,
+        "osmSource": "overpass",
+        "serviceType": "clinic",
+        "supportScore": 84
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.2827532,
+              22.8448824
+            ],
+            [
+              108.2830725,
+              22.844882
+            ],
+            [
+              108.2830721,
+              22.8445768
+            ],
+            [
+              108.2829193,
+              22.844577
+            ],
+            [
+              108.2829196,
+              22.8447418
+            ],
+            [
+              108.2827531,
+              22.844742
+            ],
+            [
+              108.2827532,
+              22.8448824
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/837946513",
+      "properties": {
+        "name": "广西自贸区医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 837946513,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.416831,
+              22.7403025
+            ],
+            [
+              108.4168021,
+              22.7402579
+            ],
+            [
+              108.4165868,
+              22.7385138
+            ],
+            [
+              108.4185771,
+              22.7383432
+            ],
+            [
+              108.4188593,
+              22.7401637
+            ],
+            [
+              108.4188356,
+              22.7402312
+            ],
+            [
+              108.4187804,
+              22.740278
+            ],
+            [
+              108.4187138,
+              22.7402972
+            ],
+            [
+              108.4169872,
+              22.7403721
+            ],
+            [
+              108.4168939,
+              22.7403551
+            ],
+            [
+              108.416831,
+              22.7403025
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/838558094",
+      "properties": {
+        "name": "中山大学第一医院广西医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 838558094,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3815846,
+              22.8337705
+            ],
+            [
+              108.3819835,
+              22.8328296
+            ],
+            [
+              108.3820271,
+              22.832785
+            ],
+            [
+              108.3820816,
+              22.8327605
+            ],
+            [
+              108.3821829,
+              22.8327705
+            ],
+            [
+              108.3837414,
+              22.833132
+            ],
+            [
+              108.3837733,
+              22.8331478
+            ],
+            [
+              108.3837903,
+              22.8331725
+            ],
+            [
+              108.383792,
+              22.8332082
+            ],
+            [
+              108.3837749,
+              22.8333263
+            ],
+            [
+              108.3836862,
+              22.8337135
+            ],
+            [
+              108.3835833,
+              22.8340614
+            ],
+            [
+              108.3834058,
+              22.8345682
+            ],
+            [
+              108.3833901,
+              22.8345848
+            ],
+            [
+              108.383369,
+              22.8345866
+            ],
+            [
+              108.3833467,
+              22.834583
+            ],
+            [
+              108.3833128,
+              22.834566
+            ],
+            [
+              108.3826021,
+              22.8342374
+            ],
+            [
+              108.3821704,
+              22.8340571
+            ],
+            [
+              108.3819415,
+              22.83397
+            ],
+            [
+              108.3816562,
+              22.8338808
+            ],
+            [
+              108.3816087,
+              22.833852
+            ],
+            [
+              108.3815826,
+              22.8338155
+            ],
+            [
+              108.3815846,
+              22.8337705
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/839607678",
+      "properties": {
+        "name": "广西医科大学第二附属医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 839607678,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.2552889,
+              22.8432443
+            ],
+            [
+              108.2549049,
+              22.843414
+            ],
+            [
+              108.2548752,
+              22.8444508
+            ],
+            [
+              108.2546587,
+              22.8458352
+            ],
+            [
+              108.256113,
+              22.8455208
+            ],
+            [
+              108.2569117,
+              22.8453481
+            ],
+            [
+              108.2569901,
+              22.8447302
+            ],
+            [
+              108.2569199,
+              22.8446382
+            ],
+            [
+              108.2569476,
+              22.8443912
+            ],
+            [
+              108.2567923,
+              22.8443588
+            ],
+            [
+              108.2568126,
+              22.8440879
+            ],
+            [
+              108.256698,
+              22.8437966
+            ],
+            [
+              108.2568311,
+              22.8433945
+            ],
+            [
+              108.257102,
+              22.8433348
+            ],
+            [
+              108.2572841,
+              22.8433366
+            ],
+            [
+              108.2574681,
+              22.8433087
+            ],
+            [
+              108.2573746,
+              22.8427838
+            ],
+            [
+              108.2573084,
+              22.8424542
+            ],
+            [
+              108.2559667,
+              22.842669
+            ],
+            [
+              108.2552328,
+              22.8428153
+            ],
+            [
+              108.2551835,
+              22.8428252
+            ],
+            [
+              108.2552889,
+              22.8432443
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/839655961",
+      "properties": {
+        "name": "广西壮族自治区妇幼保健院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 839655961,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3659537,
+              22.8549756
+            ],
+            [
+              108.3666875,
+              22.8534641
+            ],
+            [
+              108.3657027,
+              22.8530882
+            ],
+            [
+              108.3655345,
+              22.8530056
+            ],
+            [
+              108.3642054,
+              22.8522262
+            ],
+            [
+              108.3634515,
+              22.8538406
+            ],
+            [
+              108.3659537,
+              22.8549756
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/915070929",
+      "properties": {
+        "name": "南宁市第一人民医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 915070929,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3208325,
+              22.8147767
+            ],
+            [
+              108.3211715,
+              22.814658
+            ],
+            [
+              108.3210599,
+              22.8143969
+            ],
+            [
+              108.3216565,
+              22.8141952
+            ],
+            [
+              108.3216178,
+              22.8140686
+            ],
+            [
+              108.3218367,
+              22.8139974
+            ],
+            [
+              108.3214934,
+              22.8124032
+            ],
+            [
+              108.3201673,
+              22.8128462
+            ],
+            [
+              108.3200858,
+              22.8129372
+            ],
+            [
+              108.3200557,
+              22.8130796
+            ],
+            [
+              108.3208325,
+              22.8147767
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/915070930",
+      "properties": {
+        "name": "广西壮族自治区人民医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 915070930,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3233109,
+              22.8064258
+            ],
+            [
+              108.3233464,
+              22.8065143
+            ],
+            [
+              108.3233598,
+              22.8065593
+            ],
+            [
+              108.3241602,
+              22.8063418
+            ],
+            [
+              108.3246692,
+              22.806207
+            ],
+            [
+              108.3248581,
+              22.8061493
+            ],
+            [
+              108.325297,
+              22.8059188
+            ],
+            [
+              108.3249474,
+              22.80582
+            ],
+            [
+              108.325001,
+              22.805653
+            ],
+            [
+              108.3248504,
+              22.8055966
+            ],
+            [
+              108.3249479,
+              22.8053147
+            ],
+            [
+              108.3246115,
+              22.8052088
+            ],
+            [
+              108.3246379,
+              22.8051385
+            ],
+            [
+              108.3247837,
+              22.8047511
+            ],
+            [
+              108.3246502,
+              22.8047083
+            ],
+            [
+              108.3247124,
+              22.8045413
+            ],
+            [
+              108.3247594,
+              22.8044151
+            ],
+            [
+              108.3248224,
+              22.8042458
+            ],
+            [
+              108.3243197,
+              22.8040909
+            ],
+            [
+              108.3244906,
+              22.8036204
+            ],
+            [
+              108.3237804,
+              22.8033581
+            ],
+            [
+              108.3234596,
+              22.8041099
+            ],
+            [
+              108.3232943,
+              22.8044972
+            ],
+            [
+              108.3231228,
+              22.8050119
+            ],
+            [
+              108.3231094,
+              22.8050846
+            ],
+            [
+              108.3231005,
+              22.8051326
+            ],
+            [
+              108.323227,
+              22.805196
+            ],
+            [
+              108.3233125,
+              22.8053047
+            ],
+            [
+              108.3232499,
+              22.8053605
+            ],
+            [
+              108.3232615,
+              22.8056282
+            ],
+            [
+              108.3232643,
+              22.8057242
+            ],
+            [
+              108.3232813,
+              22.8058683
+            ],
+            [
+              108.3232305,
+              22.8058719
+            ],
+            [
+              108.3232485,
+              22.806061
+            ],
+            [
+              108.3232901,
+              22.8063249
+            ],
+            [
+              108.3233109,
+              22.8064258
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/915110708",
+      "properties": {
+        "name": "联勤保障部队第九二三医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 915110708,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3255399,
+              22.7988247
+            ],
+            [
+              108.3259004,
+              22.7982827
+            ],
+            [
+              108.3259132,
+              22.7981561
+            ],
+            [
+              108.3258317,
+              22.797986
+            ],
+            [
+              108.3257115,
+              22.7978871
+            ],
+            [
+              108.3259089,
+              22.7971908
+            ],
+            [
+              108.326042,
+              22.7971868
+            ],
+            [
+              108.326042,
+              22.7966069
+            ],
+            [
+              108.3263467,
+              22.7966385
+            ],
+            [
+              108.3264797,
+              22.7965713
+            ],
+            [
+              108.326763,
+              22.7966148
+            ],
+            [
+              108.326793,
+              22.7965277
+            ],
+            [
+              108.3276942,
+              22.7968957
+            ],
+            [
+              108.3277543,
+              22.7967493
+            ],
+            [
+              108.3279732,
+              22.7968165
+            ],
+            [
+              108.3280161,
+              22.7967216
+            ],
+            [
+              108.3285697,
+              22.7969154
+            ],
+            [
+              108.3285242,
+              22.7970183
+            ],
+            [
+              108.3294856,
+              22.7973665
+            ],
+            [
+              108.3294512,
+              22.7976474
+            ],
+            [
+              108.3293182,
+              22.7980509
+            ],
+            [
+              108.3292316,
+              22.7984834
+            ],
+            [
+              108.3288641,
+              22.7984481
+            ],
+            [
+              108.3288462,
+              22.7987845
+            ],
+            [
+              108.3288253,
+              22.7990703
+            ],
+            [
+              108.3286895,
+              22.7990646
+            ],
+            [
+              108.3286649,
+              22.7993498
+            ],
+            [
+              108.3277668,
+              22.799292
+            ],
+            [
+              108.3272182,
+              22.7993014
+            ],
+            [
+              108.3271719,
+              22.7994678
+            ],
+            [
+              108.3268291,
+              22.7993018
+            ],
+            [
+              108.3264323,
+              22.7991391
+            ],
+            [
+              108.3257969,
+              22.7989015
+            ],
+            [
+              108.3255399,
+              22.7988247
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/915315500",
+      "properties": {
+        "name": "广西医科大学第一附属医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 915315500,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3364401,
+              22.7999004
+            ],
+            [
+              108.3364573,
+              22.7997738
+            ],
+            [
+              108.3368341,
+              22.7980428
+            ],
+            [
+              108.3385617,
+              22.7983834
+            ],
+            [
+              108.3387938,
+              22.7976469
+            ],
+            [
+              108.3388365,
+              22.797606
+            ],
+            [
+              108.338901,
+              22.7975895
+            ],
+            [
+              108.3394744,
+              22.7975599
+            ],
+            [
+              108.3396154,
+              22.7976261
+            ],
+            [
+              108.3400405,
+              22.7977448
+            ],
+            [
+              108.3408542,
+              22.7979991
+            ],
+            [
+              108.3411219,
+              22.7980629
+            ],
+            [
+              108.3411086,
+              22.7981172
+            ],
+            [
+              108.3414269,
+              22.7981919
+            ],
+            [
+              108.3416127,
+              22.7982285
+            ],
+            [
+              108.3415599,
+              22.7984485
+            ],
+            [
+              108.3415258,
+              22.7986855
+            ],
+            [
+              108.3414959,
+              22.7988908
+            ],
+            [
+              108.3414301,
+              22.7992993
+            ],
+            [
+              108.3411814,
+              22.7993099
+            ],
+            [
+              108.3411793,
+              22.799342
+            ],
+            [
+              108.3411705,
+              22.7996245
+            ],
+            [
+              108.3406303,
+              22.7994954
+            ],
+            [
+              108.3405281,
+              22.7997914
+            ],
+            [
+              108.339093,
+              22.7994381
+            ],
+            [
+              108.339119,
+              22.7993441
+            ],
+            [
+              108.3383036,
+              22.7991326
+            ],
+            [
+              108.3373193,
+              22.7999645
+            ],
+            [
+              108.3372681,
+              22.7999157
+            ],
+            [
+              108.3372199,
+              22.7998698
+            ],
+            [
+              108.3370642,
+              22.8000079
+            ],
+            [
+              108.3368667,
+              22.800104
+            ],
+            [
+              108.3366547,
+              22.8001536
+            ],
+            [
+              108.3365217,
+              22.8001418
+            ],
+            [
+              108.3364272,
+              22.8000073
+            ],
+            [
+              108.3364401,
+              22.7999004
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/915315536",
+      "properties": {
+        "name": "广西医科大学附属口腔医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 915315536,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3393656,
+              22.8017202
+            ],
+            [
+              108.3398329,
+              22.8019608
+            ],
+            [
+              108.3399604,
+              22.801737
+            ],
+            [
+              108.3400818,
+              22.8014489
+            ],
+            [
+              108.3401971,
+              22.8014936
+            ],
+            [
+              108.3403094,
+              22.8015188
+            ],
+            [
+              108.3406098,
+              22.8015943
+            ],
+            [
+              108.3406766,
+              22.8013733
+            ],
+            [
+              108.340449,
+              22.8012978
+            ],
+            [
+              108.3405006,
+              22.8011551
+            ],
+            [
+              108.3404839,
+              22.8011506
+            ],
+            [
+              108.3405145,
+              22.8010603
+            ],
+            [
+              108.3404061,
+              22.8010344
+            ],
+            [
+              108.3404558,
+              22.8008827
+            ],
+            [
+              108.3404648,
+              22.8007463
+            ],
+            [
+              108.3403704,
+              22.8007616
+            ],
+            [
+              108.3401956,
+              22.8007545
+            ],
+            [
+              108.340133,
+              22.8007863
+            ],
+            [
+              108.3400693,
+              22.8008439
+            ],
+            [
+              108.3399965,
+              22.8009627
+            ],
+            [
+              108.3398281,
+              22.8011603
+            ],
+            [
+              108.3396393,
+              22.8012873
+            ],
+            [
+              108.3395002,
+              22.8014508
+            ],
+            [
+              108.339365,
+              22.8016425
+            ],
+            [
+              108.3393509,
+              22.801686
+            ],
+            [
+              108.3393656,
+              22.8017202
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/922786893",
+      "properties": {
+        "name": "广西江滨医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 922786893,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3467595,
+              22.7937413
+            ],
+            [
+              108.346598,
+              22.7937218
+            ],
+            [
+              108.3455385,
+              22.793566
+            ],
+            [
+              108.3456042,
+              22.7931902
+            ],
+            [
+              108.3448692,
+              22.792933
+            ],
+            [
+              108.3449974,
+              22.7926339
+            ],
+            [
+              108.3457111,
+              22.7909693
+            ],
+            [
+              108.3458794,
+              22.7910238
+            ],
+            [
+              108.3460246,
+              22.7907018
+            ],
+            [
+              108.3461179,
+              22.7907322
+            ],
+            [
+              108.3461943,
+              22.7905554
+            ],
+            [
+              108.3462641,
+              22.790569
+            ],
+            [
+              108.3462936,
+              22.7904726
+            ],
+            [
+              108.3466422,
+              22.7904619
+            ],
+            [
+              108.3466575,
+              22.7904148
+            ],
+            [
+              108.3473413,
+              22.7905983
+            ],
+            [
+              108.346928,
+              22.7919346
+            ],
+            [
+              108.3475557,
+              22.7923251
+            ],
+            [
+              108.3474434,
+              22.7924192
+            ],
+            [
+              108.3472903,
+              22.7925744
+            ],
+            [
+              108.3467595,
+              22.7937413
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/922789147",
+      "properties": {
+        "name": "广西国际壮医医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 922789147,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3802087,
+              22.7530561
+            ],
+            [
+              108.3805808,
+              22.7530547
+            ],
+            [
+              108.3807993,
+              22.753077
+            ],
+            [
+              108.3814791,
+              22.7530826
+            ],
+            [
+              108.3815918,
+              22.7530797
+            ],
+            [
+              108.3816976,
+              22.753077
+            ],
+            [
+              108.3828591,
+              22.7530779
+            ],
+            [
+              108.3829246,
+              22.7530779
+            ],
+            [
+              108.3829023,
+              22.7495118
+            ],
+            [
+              108.3828104,
+              22.7495098
+            ],
+            [
+              108.3820192,
+              22.7495174
+            ],
+            [
+              108.3817097,
+              22.7495062
+            ],
+            [
+              108.3814177,
+              22.7495152
+            ],
+            [
+              108.3814141,
+              22.7495884
+            ],
+            [
+              108.3813022,
+              22.7496583
+            ],
+            [
+              108.3812553,
+              22.7497248
+            ],
+            [
+              108.3803495,
+              22.7505635
+            ],
+            [
+              108.3803134,
+              22.7506267
+            ],
+            [
+              108.3803062,
+              22.7508097
+            ],
+            [
+              108.3803029,
+              22.7508736
+            ],
+            [
+              108.380299,
+              22.7509528
+            ],
+            [
+              108.3802881,
+              22.7511725
+            ],
+            [
+              108.3802412,
+              22.7515818
+            ],
+            [
+              108.3802087,
+              22.751665
+            ],
+            [
+              108.3802051,
+              22.7517116
+            ],
+            [
+              108.3802087,
+              22.7530561
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/956330021",
+      "properties": {
+        "name": "中国人民武装警察部队广西总队医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 956330021,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.2809778,
+              22.8476437
+            ],
+            [
+              108.2809032,
+              22.8476713
+            ],
+            [
+              108.280877,
+              22.8478913
+            ],
+            [
+              108.2807614,
+              22.848187
+            ],
+            [
+              108.2807465,
+              22.8483211
+            ],
+            [
+              108.2808248,
+              22.8486821
+            ],
+            [
+              108.2808173,
+              22.8490191
+            ],
+            [
+              108.2807763,
+              22.8492288
+            ],
+            [
+              108.2807129,
+              22.8494179
+            ],
+            [
+              108.2802316,
+              22.8504288
+            ],
+            [
+              108.2801793,
+              22.8505939
+            ],
+            [
+              108.2801831,
+              22.8508105
+            ],
+            [
+              108.2802092,
+              22.8511268
+            ],
+            [
+              108.2801271,
+              22.8516185
+            ],
+            [
+              108.2801159,
+              22.8520654
+            ],
+            [
+              108.2800735,
+              22.8522016
+            ],
+            [
+              108.2802047,
+              22.852429
+            ],
+            [
+              108.2802629,
+              22.8524739
+            ],
+            [
+              108.2803146,
+              22.8524993
+            ],
+            [
+              108.2807024,
+              22.8525772
+            ],
+            [
+              108.2810114,
+              22.852627
+            ],
+            [
+              108.2813469,
+              22.8524445
+            ],
+            [
+              108.2819835,
+              22.8524279
+            ],
+            [
+              108.2820781,
+              22.8527666
+            ],
+            [
+              108.2822237,
+              22.8529141
+            ],
+            [
+              108.2838994,
+              22.8523949
+            ],
+            [
+              108.2850402,
+              22.8523785
+            ],
+            [
+              108.2854148,
+              22.8512667
+            ],
+            [
+              108.2837359,
+              22.8510183
+            ],
+            [
+              108.2840083,
+              22.8491754
+            ],
+            [
+              108.2839024,
+              22.8490404
+            ],
+            [
+              108.283783,
+              22.8489407
+            ],
+            [
+              108.2837233,
+              22.8486038
+            ],
+            [
+              108.2837307,
+              22.8482427
+            ],
+            [
+              108.2836127,
+              22.8482546
+            ],
+            [
+              108.2835591,
+              22.8482599
+            ],
+            [
+              108.2835367,
+              22.8481258
+            ],
+            [
+              108.2834584,
+              22.8480846
+            ],
+            [
+              108.2827793,
+              22.8478576
+            ],
+            [
+              108.2824099,
+              22.8477407
+            ],
+            [
+              108.281313,
+              22.8476066
+            ],
+            [
+              108.2811451,
+              22.8476135
+            ],
+            [
+              108.2809778,
+              22.8476437
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/980131342",
+      "properties": {
+        "name": "南宁市邕宁区人民医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 980131342,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.4667495,
+              22.781645
+            ],
+            [
+              108.4667338,
+              22.7816089
+            ],
+            [
+              108.4667433,
+              22.7815631
+            ],
+            [
+              108.4670705,
+              22.7809128
+            ],
+            [
+              108.4676342,
+              22.7798726
+            ],
+            [
+              108.4679102,
+              22.779371
+            ],
+            [
+              108.4679529,
+              22.7793356
+            ],
+            [
+              108.468008,
+              22.7793199
+            ],
+            [
+              108.4680795,
+              22.7793274
+            ],
+            [
+              108.4696389,
+              22.7798836
+            ],
+            [
+              108.46971,
+              22.7799258
+            ],
+            [
+              108.4697467,
+              22.779973
+            ],
+            [
+              108.4697653,
+              22.7800428
+            ],
+            [
+              108.469756,
+              22.7801193
+            ],
+            [
+              108.4686347,
+              22.7823951
+            ],
+            [
+              108.4685969,
+              22.7824408
+            ],
+            [
+              108.4685415,
+              22.7824713
+            ],
+            [
+              108.4684852,
+              22.7824741
+            ],
+            [
+              108.4684189,
+              22.7824639
+            ],
+            [
+              108.4667736,
+              22.7816668
+            ],
+            [
+              108.4667495,
+              22.781645
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/980131345",
+      "properties": {
+        "name": "邕宁区中医院住院部",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 980131345,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.4738025,
+              22.7556514
+            ],
+            [
+              108.4738929,
+              22.755459
+            ],
+            [
+              108.4739006,
+              22.7552449
+            ],
+            [
+              108.4737526,
+              22.7550849
+            ],
+            [
+              108.473602,
+              22.7549931
+            ],
+            [
+              108.4735153,
+              22.7548684
+            ],
+            [
+              108.4735127,
+              22.7547907
+            ],
+            [
+              108.4735612,
+              22.7546848
+            ],
+            [
+              108.4737934,
+              22.7546001
+            ],
+            [
+              108.4742017,
+              22.7544919
+            ],
+            [
+              108.4746125,
+              22.7544377
+            ],
+            [
+              108.4747027,
+              22.7543889
+            ],
+            [
+              108.4747439,
+              22.7542801
+            ],
+            [
+              108.4748502,
+              22.7543142
+            ],
+            [
+              108.474843,
+              22.7553034
+            ],
+            [
+              108.4744771,
+              22.7553453
+            ],
+            [
+              108.474467,
+              22.7554752
+            ],
+            [
+              108.4742175,
+              22.7554834
+            ],
+            [
+              108.4741669,
+              22.7558123
+            ],
+            [
+              108.4738025,
+              22.7556514
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/980131346",
+      "properties": {
+        "name": "邕宁区中医院门诊部",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 980131346,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.4763387,
+              22.7570078
+            ],
+            [
+              108.4763804,
+              22.7568687
+            ],
+            [
+              108.4768006,
+              22.7569758
+            ],
+            [
+              108.4767589,
+              22.757115
+            ],
+            [
+              108.4763387,
+              22.7570078
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/980131347",
+      "properties": {
+        "name": "南宁市第一人民医院青秀分院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 980131347,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.4924697,
+              22.775147
+            ],
+            [
+              108.4932662,
+              22.7751757
+            ],
+            [
+              108.4933206,
+              22.7741189
+            ],
+            [
+              108.4925069,
+              22.7740945
+            ],
+            [
+              108.4924697,
+              22.775147
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/980131348",
+      "properties": {
+        "name": "广西中医药大学第一附属医院仙葫院区",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 980131348,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.4421174,
+              22.8136253
+            ],
+            [
+              108.4421448,
+              22.8120669
+            ],
+            [
+              108.4428395,
+              22.8120773
+            ],
+            [
+              108.4428118,
+              22.8136358
+            ],
+            [
+              108.4421174,
+              22.8136253
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/990697672",
+      "properties": {
+        "name": "前海人寿广西医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 990697672,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.4407121,
+              22.7750175
+            ],
+            [
+              108.438299,
+              22.7750026
+            ],
+            [
+              108.4382795,
+              22.7730033
+            ],
+            [
+              108.438397,
+              22.7729056
+            ],
+            [
+              108.4385153,
+              22.772892
+            ],
+            [
+              108.4389272,
+              22.7729322
+            ],
+            [
+              108.4392025,
+              22.7729448
+            ],
+            [
+              108.4399475,
+              22.7731214
+            ],
+            [
+              108.4406055,
+              22.77326
+            ],
+            [
+              108.4407325,
+              22.773397
+            ],
+            [
+              108.4407135,
+              22.7743752
+            ],
+            [
+              108.4407121,
+              22.7750175
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/997399354",
+      "properties": {
+        "name": "南宁市第一人民医院埌东分院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 997399354,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3712637,
+              22.8222217
+            ],
+            [
+              108.3718211,
+              22.8222194
+            ],
+            [
+              108.3718185,
+              22.8216585
+            ],
+            [
+              108.3712609,
+              22.8216607
+            ],
+            [
+              108.3712637,
+              22.8222217
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/999488516",
+      "properties": {
+        "name": "悦年华 南宁康复医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 999488516,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.4149468,
+              22.7382091
+            ],
+            [
+              108.4148968,
+              22.7381589
+            ],
+            [
+              108.4148697,
+              22.7375698
+            ],
+            [
+              108.4155063,
+              22.7375315
+            ],
+            [
+              108.4155612,
+              22.7375401
+            ],
+            [
+              108.4155917,
+              22.7375668
+            ],
+            [
+              108.4156045,
+              22.7376131
+            ],
+            [
+              108.4156344,
+              22.738173
+            ],
+            [
+              108.4149468,
+              22.7382091
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1001927229",
+      "properties": {
+        "name": "蒲庙镇 卫生院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1001927229,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.4904482,
+              22.7509526
+            ],
+            [
+              108.490349,
+              22.7506978
+            ],
+            [
+              108.4904509,
+              22.7506805
+            ],
+            [
+              108.490408,
+              22.7503911
+            ],
+            [
+              108.4908935,
+              22.7504035
+            ],
+            [
+              108.4908442,
+              22.7509452
+            ],
+            [
+              108.4904482,
+              22.7509526
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1001927230",
+      "properties": {
+        "name": "南宁市 第二妇幼保健院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1001927230,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.4910471,
+              22.7516004
+            ],
+            [
+              108.491081,
+              22.7508701
+            ],
+            [
+              108.4913336,
+              22.7508701
+            ],
+            [
+              108.4914168,
+              22.7510605
+            ],
+            [
+              108.4915493,
+              22.7516004
+            ],
+            [
+              108.4910471,
+              22.7516004
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1001927231",
+      "properties": {
+        "name": "邕宁区 妇幼保健院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1001927231,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.4944424,
+              22.7488744
+            ],
+            [
+              108.4944225,
+              22.7488644
+            ],
+            [
+              108.4943819,
+              22.7487163
+            ],
+            [
+              108.4943842,
+              22.7486915
+            ],
+            [
+              108.4944435,
+              22.7486076
+            ],
+            [
+              108.4946864,
+              22.7485294
+            ],
+            [
+              108.4949558,
+              22.7485881
+            ],
+            [
+              108.494972,
+              22.7486042
+            ],
+            [
+              108.4949702,
+              22.7486969
+            ],
+            [
+              108.4949566,
+              22.7487221
+            ],
+            [
+              108.4944424,
+              22.7488744
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1007350158",
+      "properties": {
+        "name": "广西生殖医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1007350158,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.4195393,
+              22.793622
+            ],
+            [
+              108.4195886,
+              22.7932129
+            ],
+            [
+              108.4204944,
+              22.7933038
+            ],
+            [
+              108.4204697,
+              22.7937072
+            ],
+            [
+              108.4195393,
+              22.793622
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1007574995",
+      "properties": {
+        "name": "广西壮族自治区皮肤病医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1007574995,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.2499805,
+              22.8412286
+            ],
+            [
+              108.2517556,
+              22.8411589
+            ],
+            [
+              108.2514775,
+              22.8415437
+            ],
+            [
+              108.2512414,
+              22.8416178
+            ],
+            [
+              108.2512495,
+              22.8418502
+            ],
+            [
+              108.2497743,
+              22.8418799
+            ],
+            [
+              108.2499805,
+              22.8412286
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1011959795",
+      "properties": {
+        "name": "广西国际壮医医院（明秀分院）",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1011959795,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3126539,
+              22.8470129
+            ],
+            [
+              108.3129629,
+              22.8455458
+            ],
+            [
+              108.3132881,
+              22.8457406
+            ],
+            [
+              108.3134751,
+              22.8458343
+            ],
+            [
+              108.3136378,
+              22.8459092
+            ],
+            [
+              108.3132841,
+              22.8469456
+            ],
+            [
+              108.3130767,
+              22.8468908
+            ],
+            [
+              108.3130048,
+              22.8471118
+            ],
+            [
+              108.3126539,
+              22.8470129
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1012349763",
+      "properties": {
+        "name": "广西工人医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1012349763,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3457249,
+              22.7898346
+            ],
+            [
+              108.345395,
+              22.7897555
+            ],
+            [
+              108.3452985,
+              22.7900299
+            ],
+            [
+              108.3449525,
+              22.7899261
+            ],
+            [
+              108.3449417,
+              22.7902327
+            ],
+            [
+              108.3443356,
+              22.7902525
+            ],
+            [
+              108.3440861,
+              22.7888974
+            ],
+            [
+              108.3441827,
+              22.7888331
+            ],
+            [
+              108.34429,
+              22.7889221
+            ],
+            [
+              108.3444858,
+              22.7889394
+            ],
+            [
+              108.3446601,
+              22.7886872
+            ],
+            [
+              108.3459905,
+              22.7890977
+            ],
+            [
+              108.3457249,
+              22.7898346
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1014354032",
+      "properties": {
+        "name": "广西医科大学附属肿瘤医院（五象院区）",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1014354032,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3554839,
+              22.7268375
+            ],
+            [
+              108.3560969,
+              22.7247582
+            ],
+            [
+              108.3563237,
+              22.7246542
+            ],
+            [
+              108.3615906,
+              22.7260075
+            ],
+            [
+              108.3608693,
+              22.7281499
+            ],
+            [
+              108.3554839,
+              22.7268375
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1014598154",
+      "properties": {
+        "name": "广西中医药大学第一附属医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1014598154,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3415917,
+              22.8246622
+            ],
+            [
+              108.3421418,
+              22.8249534
+            ],
+            [
+              108.3422501,
+              22.8250108
+            ],
+            [
+              108.3421281,
+              22.8252135
+            ],
+            [
+              108.3428121,
+              22.825567
+            ],
+            [
+              108.3427048,
+              22.8257154
+            ],
+            [
+              108.3426243,
+              22.82575
+            ],
+            [
+              108.3424312,
+              22.8259304
+            ],
+            [
+              108.3421388,
+              22.8258736
+            ],
+            [
+              108.3416238,
+              22.8258785
+            ],
+            [
+              108.3406582,
+              22.8255398
+            ],
+            [
+              108.3405295,
+              22.8254582
+            ],
+            [
+              108.3401862,
+              22.8250874
+            ],
+            [
+              108.3407092,
+              22.8245485
+            ],
+            [
+              108.3408219,
+              22.8244842
+            ],
+            [
+              108.3408836,
+              22.8245732
+            ],
+            [
+              108.3414656,
+              22.8248476
+            ],
+            [
+              108.3415363,
+              22.8247436
+            ],
+            [
+              108.3415917,
+              22.8246622
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1015073787",
+      "properties": {
+        "name": "良庆区人民医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1015073787,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3413207,
+              22.7342913
+            ],
+            [
+              108.3416668,
+              22.7337273
+            ],
+            [
+              108.3432358,
+              22.7346129
+            ],
+            [
+              108.3432882,
+              22.7346723
+            ],
+            [
+              108.343323,
+              22.7347589
+            ],
+            [
+              108.3433311,
+              22.7348294
+            ],
+            [
+              108.343315,
+              22.7348863
+            ],
+            [
+              108.343083,
+              22.7352623
+            ],
+            [
+              108.3413207,
+              22.7342913
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1022859153",
+      "properties": {
+        "name": "广西区总工会南宁工人疗养院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1022859153,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3011466,
+              22.78479
+            ],
+            [
+              108.3011359,
+              22.7843992
+            ],
+            [
+              108.301034,
+              22.7843968
+            ],
+            [
+              108.3005539,
+              22.7841569
+            ],
+            [
+              108.3005619,
+              22.7837241
+            ],
+            [
+              108.299709,
+              22.7837241
+            ],
+            [
+              108.2996982,
+              22.7822354
+            ],
+            [
+              108.3018386,
+              22.7826756
+            ],
+            [
+              108.3017528,
+              22.7836846
+            ],
+            [
+              108.3018547,
+              22.7836945
+            ],
+            [
+              108.3018333,
+              22.7845649
+            ],
+            [
+              108.3012861,
+              22.784555
+            ],
+            [
+              108.3012901,
+              22.7847887
+            ],
+            [
+              108.301219,
+              22.7847893
+            ],
+            [
+              108.3011466,
+              22.78479
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1036187480",
+      "properties": {
+        "name": "广西医科大学附属肿瘤医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1036187480,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3368976,
+              22.7977853
+            ],
+            [
+              108.3369412,
+              22.7977259
+            ],
+            [
+              108.3370171,
+              22.7976734
+            ],
+            [
+              108.3371555,
+              22.7976315
+            ],
+            [
+              108.3386102,
+              22.7975108
+            ],
+            [
+              108.3385685,
+              22.7976472
+            ],
+            [
+              108.3386937,
+              22.7976699
+            ],
+            [
+              108.3384964,
+              22.7983168
+            ],
+            [
+              108.3368426,
+              22.7980179
+            ],
+            [
+              108.3368976,
+              22.7977853
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1040471199",
+      "properties": {
+        "name": "南宁市疾病预防控制中心",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1040471199,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.365671,
+              22.8529952
+            ],
+            [
+              108.3662855,
+              22.8512579
+            ],
+            [
+              108.3673249,
+              22.8517298
+            ],
+            [
+              108.3667142,
+              22.8533901
+            ],
+            [
+              108.365671,
+              22.8529952
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1059583612",
+      "properties": {
+        "name": "南宁市第二人民医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1059583612,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3020141,
+              22.8003592
+            ],
+            [
+              108.3025773,
+              22.7996487
+            ],
+            [
+              108.302258,
+              22.7994335
+            ],
+            [
+              108.3023062,
+              22.7977945
+            ],
+            [
+              108.3013632,
+              22.797771
+            ],
+            [
+              108.3013017,
+              22.7998793
+            ],
+            [
+              108.3020141,
+              22.8003592
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1065047756",
+      "properties": {
+        "name": "南宁市第四人民医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1065047756,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3410959,
+              22.836894
+            ],
+            [
+              108.3406185,
+              22.8385777
+            ],
+            [
+              108.3405146,
+              22.8389328
+            ],
+            [
+              108.340285,
+              22.8388998
+            ],
+            [
+              108.3397695,
+              22.838787
+            ],
+            [
+              108.3396572,
+              22.8385189
+            ],
+            [
+              108.3394684,
+              22.8382931
+            ],
+            [
+              108.3396419,
+              22.8374041
+            ],
+            [
+              108.3393663,
+              22.8372583
+            ],
+            [
+              108.3392336,
+              22.8368491
+            ],
+            [
+              108.3394072,
+              22.8365904
+            ],
+            [
+              108.3392592,
+              22.83636
+            ],
+            [
+              108.3397491,
+              22.8359178
+            ],
+            [
+              108.339989,
+              22.8362283
+            ],
+            [
+              108.3404738,
+              22.8365951
+            ],
+            [
+              108.3410959,
+              22.836894
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1079663074",
+      "properties": {
+        "name": "南宁市中医医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1079663074,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3148491,
+              22.8600169
+            ],
+            [
+              108.3153399,
+              22.8600103
+            ],
+            [
+              108.3159931,
+              22.8595847
+            ],
+            [
+              108.3161013,
+              22.8587034
+            ],
+            [
+              108.3157802,
+              22.8586835
+            ],
+            [
+              108.3157116,
+              22.8590925
+            ],
+            [
+              108.3152713,
+              22.859036
+            ],
+            [
+              108.3152425,
+              22.8592022
+            ],
+            [
+              108.3146831,
+              22.8591756
+            ],
+            [
+              108.3146542,
+              22.8596246
+            ],
+            [
+              108.3148491,
+              22.8600169
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1213844247",
+      "properties": {
+        "name": "广西水电医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1213844247,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3117732,
+              22.7619628
+            ],
+            [
+              108.3125743,
+              22.7620508
+            ],
+            [
+              108.3126113,
+              22.7617951
+            ],
+            [
+              108.3133723,
+              22.7618321
+            ],
+            [
+              108.3135571,
+              22.7613633
+            ],
+            [
+              108.3125373,
+              22.7612582
+            ],
+            [
+              108.3126143,
+              22.760815
+            ],
+            [
+              108.3118811,
+              22.7607155
+            ],
+            [
+              108.3117732,
+              22.7619628
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1332053213",
+      "properties": {
+        "name": "广西壮族自治区南宁茅桥中心医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1332053213,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3597491,
+              22.8372053
+            ],
+            [
+              108.3599258,
+              22.836643
+            ],
+            [
+              108.3601784,
+              22.8359653
+            ],
+            [
+              108.3601764,
+              22.8358196
+            ],
+            [
+              108.3591288,
+              22.8357382
+            ],
+            [
+              108.3590918,
+              22.8359218
+            ],
+            [
+              108.3579292,
+              22.8358479
+            ],
+            [
+              108.3578656,
+              22.8364935
+            ],
+            [
+              108.3570891,
+              22.8362587
+            ],
+            [
+              108.3571056,
+              22.836395
+            ],
+            [
+              108.3574116,
+              22.8367225
+            ],
+            [
+              108.3576335,
+              22.837122
+            ],
+            [
+              108.3579108,
+              22.837209
+            ],
+            [
+              108.3583339,
+              22.8372431
+            ],
+            [
+              108.3588577,
+              22.8372318
+            ],
+            [
+              108.3597491,
+              22.8372053
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1383693028",
+      "properties": {
+        "name": "邕宁区疾病预防控制中心（新址）",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1383693028,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.4767768,
+              22.7499314
+            ],
+            [
+              108.4780899,
+              22.7497852
+            ],
+            [
+              108.4781387,
+              22.7505125
+            ],
+            [
+              108.4781184,
+              22.7505763
+            ],
+            [
+              108.4780732,
+              22.7506328
+            ],
+            [
+              108.4780147,
+              22.7506641
+            ],
+            [
+              108.4779192,
+              22.750684
+            ],
+            [
+              108.476845,
+              22.7508293
+            ],
+            [
+              108.4767768,
+              22.7499314
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1395880441",
+      "properties": {
+        "name": "广西壮族自治区儿童医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1395880441,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.2878258,
+              22.8206328
+            ],
+            [
+              108.2891889,
+              22.8206032
+            ],
+            [
+              108.2891832,
+              22.8203795
+            ],
+            [
+              108.2885649,
+              22.8198202
+            ],
+            [
+              108.2886959,
+              22.8196972
+            ],
+            [
+              108.2882547,
+              22.819298
+            ],
+            [
+              108.2881233,
+              22.8192266
+            ],
+            [
+              108.2876975,
+              22.8198921
+            ],
+            [
+              108.287633,
+              22.8201209
+            ],
+            [
+              108.2876238,
+              22.8205973
+            ],
+            [
+              108.2877383,
+              22.8205992
+            ],
+            [
+              108.2878258,
+              22.8206328
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1412403189",
+      "properties": {
+        "name": "南宁市第五人民医院·南宁市心理医院",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1412403189,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3328807,
+              22.8614969
+            ],
+            [
+              108.332867,
+              22.860955
+            ],
+            [
+              108.3328662,
+              22.8609243
+            ],
+            [
+              108.3335832,
+              22.8609109
+            ],
+            [
+              108.3336892,
+              22.8609281
+            ],
+            [
+              108.3338097,
+              22.8609952
+            ],
+            [
+              108.3338596,
+              22.8610794
+            ],
+            [
+              108.3338451,
+              22.8611484
+            ],
+            [
+              108.3337866,
+              22.8612561
+            ],
+            [
+              108.3337432,
+              22.8613361
+            ],
+            [
+              108.3337377,
+              22.8613458
+            ],
+            [
+              108.3337227,
+              22.8613718
+            ],
+            [
+              108.3336559,
+              22.8614778
+            ],
+            [
+              108.3333251,
+              22.8614859
+            ],
+            [
+              108.3328807,
+              22.8614969
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "way/1412403198",
+      "properties": {
+        "name": "南宁市第五人民医院·南宁市心理医院（精卫门诊）",
+        "category": "医院",
+        "tags": [
+          "amenity:hospital"
+        ],
+        "osmType": "way",
+        "osmId": 1412403198,
+        "osmSource": "overpass",
+        "serviceType": "hospital",
+        "supportScore": 92
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.3293193,
+              22.8621262
+            ],
+            [
+              108.330178,
+              22.8622224
+            ],
+            [
+              108.3302996,
+              22.8622361
+            ],
+            [
+              108.3303717,
+              22.8622442
+            ],
+            [
+              108.330977,
+              22.8623064
+            ],
+            [
+              108.3309732,
+              22.8626602
+            ],
+            [
+              108.3309652,
+              22.863421
+            ],
+            [
+              108.3309623,
+              22.8636935
+            ],
+            [
+              108.330959,
+              22.8638518
+            ],
+            [
+              108.3306596,
+              22.8641671
+            ],
+            [
+              108.3305199,
+              22.8643142
+            ],
+            [
+              108.3303973,
+              22.8645243
+            ],
+            [
+              108.3303118,
+              22.8648264
+            ],
+            [
+              108.3301294,
+              22.8648185
+            ],
+            [
+              108.3297416,
+              22.8647056
+            ],
+            [
+              108.3282962,
+              22.8639333
+            ],
+            [
+              108.3286155,
+              22.8633317
+            ],
+            [
+              108.3287467,
+              22.8631977
+            ],
+            [
+              108.3289754,
+              22.8629159
+            ],
+            [
+              108.3293202,
+              22.8629184
+            ],
+            [
+              108.3293193,
+              22.8621262
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

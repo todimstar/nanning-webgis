@@ -1,127 +1,285 @@
 #!/usr/bin/env node
-/**
- * Fetch OSM data from Overpass API and convert to GeoJSON.
- *
- * Usage:
- *   npm i -D osmtogeojson
- *   node scripts/fetch_overpass.mjs green_spaces
- *   node scripts/fetch_overpass.mjs medical_services
- *   node scripts/fetch_overpass.mjs roads_major
- *   node scripts/fetch_overpass.mjs noise_risk_poi
- *
- * Default bbox: Nanning core area.
- * Override:
- *   BBOX="22.65,108.15,22.95,108.55" node scripts/fetch_overpass.mjs green_spaces
- *
- * BBOX order for Overpass: south,west,north,east
- */
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-import fs from "node:fs/promises";
-import path from "node:path";
-import process from "node:process";
-import osmtogeojson from "osmtogeojson";
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const rootDir = path.resolve(__dirname, '..');
+const queryDir = path.join(__dirname, 'overpass_queries');
+const outputDir = path.join(rootDir, 'public', 'data', 'osm_cache');
 
-const DATASET = process.argv[2];
-if (!DATASET) {
-  console.error("Missing dataset name. Example: node scripts/fetch_overpass.mjs green_spaces");
-  process.exit(1);
-}
+const DEFAULT_BBOX = '22.72,108.20,22.93,108.55';
+const DEFAULT_ENDPOINTS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+  'https://overpass.openstreetmap.ru/api/interpreter',
+];
 
-const ROOT = process.cwd();
-const queryPath = path.join(ROOT, "scripts", "overpass_queries", `${DATASET}.overpassql`);
-const outDir = path.join(ROOT, "public", "data");
-const rawDir = path.join(ROOT, "public", "data", "_raw_overpass");
-const outPath = path.join(outDir, `${DATASET}.geojson`);
-const sourcePath = path.join(outDir, "DATA_SOURCES.md");
+const DATASETS = [
+  {
+    key: 'green_spaces',
+    queryFile: 'green_spaces.overpassql',
+    description: 'OSM/Overpass parks, gardens, woods and water features in Nanning',
+  },
+  {
+    key: 'medical_services',
+    queryFile: 'medical_services.overpassql',
+    description: 'OSM/Overpass hospitals, clinics and pharmacies in Nanning',
+  },
+  {
+    key: 'noise_risk_poi',
+    queryFile: 'noise_risk_poi.overpassql',
+    description: 'OSM/Overpass roads and night activity POIs used by the noise-risk model',
+  },
+  {
+    key: 'culture_green_points',
+    queryFile: 'culture_green_points.overpassql',
+    description: 'OSM/Overpass ecological and cultural city places in Nanning',
+  },
+];
 
-const bbox = process.env.BBOX || "22.65,108.15,22.95,108.55";
-const endpoint = process.env.OVERPASS_ENDPOINT || "https://overpass-api.de/api/interpreter";
+const args = parseArgs(process.argv.slice(2));
+const bbox = args.bbox ?? DEFAULT_BBOX;
+const endpoints = args.endpoint ? [args.endpoint] : DEFAULT_ENDPOINTS;
 
-function classifyFeature(feature, dataset) {
-  const p = feature.properties || {};
-  const tags = p.tags || p || {};
-  let category = dataset;
+await mkdir(outputDir, { recursive: true });
 
-  if (tags.leisure) category = tags.leisure;
-  if (tags.landuse) category = tags.landuse;
-  if (tags.natural) category = tags.natural;
-  if (tags.waterway) category = tags.waterway;
-  if (tags.amenity) category = tags.amenity;
-  if (tags.healthcare) category = tags.healthcare;
-  if (tags.highway) category = tags.highway;
-  if (tags.railway) category = tags.railway;
-  if (tags.shop) category = tags.shop;
-  if (tags.tourism) category = tags.tourism;
+const manifest = {
+  generatedAt: new Date().toISOString(),
+  bbox,
+  source: 'OpenStreetMap via Overpass API',
+  datasets: [],
+};
 
-  feature.properties = {
-    name: tags.name || tags["name:zh"] || tags["name:en"] || "未命名",
-    category,
-    source: "OpenStreetMap / Overpass API",
-    dataset,
-    osm_id: p.id || p["@id"] || tags.id || "",
-    tags
-  };
-  return feature;
-}
+for (const dataset of DATASETS) {
+  const queryTemplate = await readFile(path.join(queryDir, dataset.queryFile), 'utf8');
+  const query = queryTemplate.replaceAll('{{bbox}}', bbox);
+  const overpassJson = await fetchWithFallback(query, endpoints);
+  const geojson = overpassToGeoJson(overpassJson, dataset);
+  const fileName = `${dataset.key}.geojson`;
+  const filePath = path.join(outputDir, fileName);
 
-async function main() {
-  await fs.mkdir(outDir, { recursive: true });
-  await fs.mkdir(rawDir, { recursive: true });
-
-  let query = await fs.readFile(queryPath, "utf-8");
-  query = query.replaceAll("{{bbox}}", bbox);
-
-  console.log(`[overpass] dataset=${DATASET}`);
-  console.log(`[overpass] bbox=${bbox}`);
-  console.log(`[overpass] endpoint=${endpoint}`);
-
-  const body = new URLSearchParams({ data: query });
-
-  const res = await fetch(endpoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-      "User-Agent": "green-city-webgis-course-demo/1.0"
-    },
-    body
+  await writeFile(filePath, `${JSON.stringify(geojson, null, 2)}\n`, 'utf8');
+  manifest.datasets.push({
+    key: dataset.key,
+    file: `osm_cache/${fileName}`,
+    featureCount: geojson.features.length,
+    description: dataset.description,
   });
 
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Overpass request failed: ${res.status} ${res.statusText}\n${text.slice(0, 500)}`);
-  }
-
-  const osmJson = await res.json();
-  const rawPath = path.join(rawDir, `${DATASET}.overpass.json`);
-  await fs.writeFile(rawPath, JSON.stringify(osmJson, null, 2), "utf-8");
-
-  const geojson = osmtogeojson(osmJson);
-  geojson.features = geojson.features
-    .filter(f => f.geometry)
-    .map(f => classifyFeature(f, DATASET));
-
-  await fs.writeFile(outPath, JSON.stringify(geojson, null, 2), "utf-8");
-
-  const now = new Date().toISOString();
-  const log = [
-    `\n## ${DATASET}`,
-    `- generated_at: ${now}`,
-    `- bbox: ${bbox}`,
-    `- endpoint: ${endpoint}`,
-    `- query: scripts/overpass_queries/${DATASET}.overpassql`,
-    `- raw: public/data/_raw_overpass/${DATASET}.overpass.json`,
-    `- output: public/data/${DATASET}.geojson`,
-    `- features: ${geojson.features.length}`,
-    `- source: OpenStreetMap contributors via Overpass API`,
-    ""
-  ].join("\n");
-  await fs.appendFile(sourcePath, log, "utf-8");
-
-  console.log(`[done] ${outPath}`);
-  console.log(`[done] features=${geojson.features.length}`);
+  console.log(`${dataset.key}: ${geojson.features.length} features -> ${filePath}`);
 }
 
-main().catch(err => {
-  console.error(err);
-  process.exit(1);
-});
+await writeFile(path.join(outputDir, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
+console.log(`manifest -> ${path.join(outputDir, 'manifest.json')}`);
+
+function parseArgs(rawArgs) {
+  return rawArgs.reduce((parsed, item) => {
+    const [rawKey, ...rest] = item.replace(/^--/, '').split('=');
+    if (!rawKey || rest.length === 0) return parsed;
+    parsed[rawKey] = rest.join('=');
+    return parsed;
+  }, {});
+}
+
+async function fetchWithFallback(query, endpoints) {
+  let lastError;
+  for (const endpoint of endpoints) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 90_000);
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded;charset=UTF-8',
+          'user-agent': 'green-city-webgis/0.1 Overpass cache builder',
+        },
+        body: new URLSearchParams({ data: query }),
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+
+      if (!response.ok) {
+        throw new Error(`${endpoint} returned ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      lastError = error;
+      console.warn(`Overpass endpoint failed: ${endpoint} (${error.message})`);
+    }
+  }
+
+  throw lastError ?? new Error('No Overpass endpoint responded');
+}
+
+function overpassToGeoJson(overpassJson, dataset) {
+  const features = (overpassJson.elements ?? [])
+    .map((element) => elementToFeature(element, dataset.key))
+    .filter(Boolean);
+
+  return {
+    type: 'FeatureCollection',
+    name: dataset.key,
+    metadata: {
+      generatedAt: new Date().toISOString(),
+      source: 'OpenStreetMap via Overpass API',
+      description: dataset.description,
+    },
+    features,
+  };
+}
+
+function elementToFeature(element, datasetKey) {
+  const tags = element.tags ?? {};
+  const geometry = getGeometry(element);
+  if (!geometry) return null;
+
+  return {
+    type: 'Feature',
+    id: `${element.type}/${element.id}`,
+    properties: normalizeProperties(tags, datasetKey, element),
+    geometry,
+  };
+}
+
+function getGeometry(element) {
+  if (element.type === 'node' && Number.isFinite(element.lon) && Number.isFinite(element.lat)) {
+    return {
+      type: 'Point',
+      coordinates: [element.lon, element.lat],
+    };
+  }
+
+  if (Array.isArray(element.geometry) && element.geometry.length > 1) {
+    const coordinates = element.geometry
+      .filter((point) => Number.isFinite(point.lon) && Number.isFinite(point.lat))
+      .map((point) => [point.lon, point.lat]);
+
+    if (coordinates.length > 3 && isClosed(coordinates)) {
+      return {
+        type: 'Polygon',
+        coordinates: [coordinates],
+      };
+    }
+
+    if (coordinates.length > 1) {
+      return {
+        type: 'LineString',
+        coordinates,
+      };
+    }
+  }
+
+  const center = element.center;
+  if (center && Number.isFinite(center.lon) && Number.isFinite(center.lat)) {
+    return {
+      type: 'Point',
+      coordinates: [center.lon, center.lat],
+    };
+  }
+
+  return null;
+}
+
+function isClosed(coordinates) {
+  const first = coordinates[0];
+  const last = coordinates[coordinates.length - 1];
+  return first[0] === last[0] && first[1] === last[1];
+}
+
+function normalizeProperties(tags, datasetKey, element) {
+  const name = tags.name ?? tags['name:zh'] ?? tags['name:en'] ?? defaultName(datasetKey, tags, element);
+  const category = getCategory(datasetKey, tags);
+  const base = {
+    name,
+    category,
+    tags: Object.entries(tags)
+      .filter(([key]) => ['amenity', 'leisure', 'natural', 'tourism', 'highway', 'railway', 'waterway'].includes(key))
+      .map(([key, value]) => `${key}:${value}`),
+    osmType: element.type,
+    osmId: element.id,
+    osmSource: 'overpass',
+  };
+
+  if (datasetKey === 'green_spaces') {
+    return {
+      ...base,
+      cultureText: '来自 OSM/Overpass 的南宁绿地、水系或自然生态空间。',
+      greenScore: tags.natural === 'water' ? 82 : 88,
+      quietScore: 76,
+    };
+  }
+
+  if (datasetKey === 'medical_services') {
+    return {
+      ...base,
+      serviceType: tags.amenity ?? 'medical',
+      supportScore: tags.amenity === 'hospital' ? 92 : tags.amenity === 'clinic' ? 84 : 76,
+    };
+  }
+
+  if (datasetKey === 'noise_risk_poi') {
+    return {
+      ...base,
+      riskType: getRiskType(tags),
+      riskWeight: getRiskWeight(tags),
+    };
+  }
+
+  return {
+    ...base,
+    cultureText: '来自 OSM/Overpass 的南宁生态文化相关公共空间。',
+    greenScore: tags.leisure ? 86 : 74,
+    quietScore: 70,
+  };
+}
+
+function defaultName(datasetKey, tags, element) {
+  const primaryTag = tags.amenity ?? tags.leisure ?? tags.natural ?? tags.tourism ?? tags.highway ?? tags.railway;
+  return `${getCategory(datasetKey, tags)} ${primaryTag ?? element.id}`;
+}
+
+function getCategory(datasetKey, tags) {
+  if (datasetKey === 'green_spaces') {
+    if (tags.natural === 'water') return '水系';
+    if (tags.natural === 'wood') return '林地';
+    if (tags.leisure === 'garden') return '花园';
+    return '绿地公园';
+  }
+
+  if (datasetKey === 'medical_services') {
+    if (tags.amenity === 'hospital') return '医院';
+    if (tags.amenity === 'clinic') return '诊所';
+    if (tags.amenity === 'pharmacy') return '药店';
+    return '医疗服务';
+  }
+
+  if (datasetKey === 'noise_risk_poi') {
+    if (tags.highway) return '交通噪音风险';
+    if (tags.railway) return '轨道噪音风险';
+    return '夜间活动噪音风险';
+  }
+
+  if (tags.tourism === 'museum') return '博物馆';
+  if (tags.tourism === 'attraction') return '景观点';
+  if (tags.amenity === 'theatre' || tags.amenity === 'arts_centre') return '文化艺术点';
+  return '绿城生态文化点';
+}
+
+function getRiskType(tags) {
+  if (tags.highway) return 'traffic';
+  if (tags.railway) return 'railway';
+  if (tags.amenity === 'bar' || tags.amenity === 'pub' || tags.amenity === 'nightclub') return 'nightlife';
+  return 'dining';
+}
+
+function getRiskWeight(tags) {
+  if (tags.highway === 'motorway' || tags.highway === 'trunk') return 36;
+  if (tags.highway === 'primary') return 30;
+  if (tags.highway === 'secondary') return 24;
+  if (tags.railway) return 28;
+  if (tags.amenity === 'nightclub') return 34;
+  if (tags.amenity === 'bar' || tags.amenity === 'pub') return 30;
+  return 18;
+}

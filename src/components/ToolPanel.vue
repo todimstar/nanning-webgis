@@ -1,4 +1,6 @@
 <script setup>
+import { ref } from 'vue';
+
 const DRAW_TOOLS = [
   { key: 'inspect', label: '点选查询' },
   { key: 'drawPoint', label: '绘点' },
@@ -10,9 +12,12 @@ const DRAW_TOOLS = [
   { key: 'measureArea', label: '测面积' },
   { key: 'boxQuery', label: '框选查询' },
   { key: 'circleQuery', label: '圆选查询' },
+  { key: 'buffer', label: '缓冲区' },
   { key: 'edit', label: '编辑' },
   { key: 'delete', label: '删除' },
 ];
+
+const attributeKeyword = ref('');
 
 defineProps({
   activeTool: {
@@ -46,6 +51,21 @@ const emit = defineEmits(['update:activeTool', 'command']);
     <div class="tool-actions">
       <button type="button" @click="emit('command', 'clearDrawings')">清空绘制</button>
       <button type="button" @click="emit('command', 'exportMap')">导出地图</button>
+    </div>
+
+    <div class="attribute-search">
+      <input
+        v-model="attributeKeyword"
+        type="search"
+        placeholder="按名称 / category / tags 查询"
+        @keydown.enter="emit('command', { type: 'attributeFilter', keyword: attributeKeyword })"
+      />
+      <button
+        type="button"
+        @click="emit('command', { type: 'attributeFilter', keyword: attributeKeyword })"
+      >
+        属性查询
+      </button>
     </div>
 
     <p class="tool-hint">

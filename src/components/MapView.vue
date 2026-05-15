@@ -6,6 +6,8 @@ import Map from 'ol/Map';
 import View from 'ol/View';
 import Circle from 'ol/geom/Circle';
 import Point from 'ol/geom/Point';
+import Polygon from 'ol/geom/Polygon';
+import HeatmapLayer from 'ol/layer/Heatmap';
 import VectorLayer from 'ol/layer/Vector';
 import Draw, { createBox } from 'ol/interaction/Draw';
 import Modify from 'ol/interaction/Modify';
@@ -18,8 +20,9 @@ import { fromLonLat, toLonLat } from 'ol/proj';
 import { getArea, getLength } from 'ol/sphere';
 import { unByKey } from 'ol/Observable';
 import { createBaseLayers, createOverviewLayer } from '../gis/baseLayers.js';
-import { NANNING_CENTER, OVERLAY_LAYER_DEFS, safeLoadGeoJson } from '../data/greenCityData.js';
+import { NANNING_CENTER, OVERLAY_LAYER_DEFS, loadLayerGeoJson } from '../data/greenCityData.js';
 import { gcj02ToWgs84, wgs84ToGcj02 } from '../utils/coordTransform.js';
+import { describeFeature } from '../utils/featureDescription.js';
 
 const props = defineProps({
   baseLayerKey: {
@@ -27,6 +30,10 @@ const props = defineProps({
     required: true,
   },
   overlayState: {
+    type: Object,
+    required: true,
+  },
+  heatmapState: {
     type: Object,
     required: true,
   },
@@ -62,6 +69,7 @@ const popupState = ref({
 const map = shallowRef(null);
 const baseLayers = shallowRef({});
 const overlayLayers = shallowRef({});
+const heatmapLayers = shallowRef({});
 const baseLayerLoadState = ref({
   pending: 0,
   errors: 0,
@@ -72,7 +80,7 @@ const querySource = new VectorSource();
 const drawingSource = new VectorSource();
 const geoJsonFormat = new GeoJSON();
 const activeInteraction = shallowRef(null);
-const overlayDataCache = new Map();
+const overlayDataCache = new globalThis.Map();
 
 const markerLayer = new VectorLayer({
   source: markerSource,
@@ -127,6 +135,11 @@ const DRAW_TOOL_CONFIG = {
   boxQuery: { type: 'Circle', label: '框选查询', geometryFunction: createBox(), query: 'box' },
   circleQuery: { type: 'Circle', label: '圆选查询', query: 'circle' },
 };
+
+const HEATMAP_DEFS = [
+  { key: 'greenHeatmap', label: '绿城友好度热力', sourceLayerKey: 'greenSpaces', minZoom: 13.5, blur: 12, radius: 9 },
+  { key: 'noiseHeatmap', label: '噪音风险热力', sourceLayerKey: 'noiseRiskPoi', minZoom: 14, blur: 10, radius: 8 },
+];
 
 const SLOW_BASE_LAYER_LABELS = {
   osm: 'OSM 标准底图来自境外公开瓦片源，课堂网络下可能加载较慢；演示时建议切回高德标准底图。',
@@ -197,11 +210,46 @@ function setBaseLayer(key) {
   });
 }
 
+function resolutionToZoom(resolution) {
+  return Math.log2(156543.03392804097 / resolution);
+}
+
+function shouldRenderFeature(key, zoom, isPolygon, isPoint) {
+  if (key === 'nanningDemoBoundary') return true;
+  if (key === 'demoGrid') return zoom >= 13.2;
+  if (key === 'greenSpaces') return isPolygon || zoom >= 14;
+  if (key === 'noiseRiskPoi') return isPoint ? zoom >= 15.2 : zoom >= 12.2;
+  if (key === 'medicalServices') return zoom >= 14.5;
+  if (key === 'cultureGreenPoints') return isPolygon ? zoom >= 13.8 : zoom >= 14.5;
+  return true;
+}
+
+function shouldShowLabel(key, zoom, isPolygon, isPoint) {
+  if (key === 'nanningDemoBoundary') return zoom >= 11.2;
+  if (key === 'demoGrid') return zoom >= 16.5;
+  if (key === 'greenSpaces') return isPolygon ? zoom >= 14.6 : zoom >= 16;
+  if (key === 'noiseRiskPoi') return isPoint && zoom >= 17.2;
+  if (key === 'medicalServices') return zoom >= 16.4;
+  if (key === 'cultureGreenPoints') return zoom >= 15.8;
+  return zoom >= 15;
+}
+
+function truncateLabel(name, key) {
+  if (!name || key === 'noiseRiskPoi') return '';
+  return name.length > 12 ? `${name.slice(0, 12)}...` : name;
+}
+
 function layerStyle(definition) {
-  return (feature) => {
+  return (feature, resolution) => {
     const name = feature.get('name') ?? '';
     const geometryType = feature.getGeometry()?.getType();
     const isPolygon = geometryType?.includes('Polygon');
+    const isPoint = geometryType === 'Point' || geometryType?.includes('MultiPoint');
+    const zoom = resolutionToZoom(resolution);
+    if (!shouldRenderFeature(definition.key, zoom, isPolygon, isPoint)) return undefined;
+    const text = shouldShowLabel(definition.key, zoom, isPolygon, isPoint)
+      ? truncateLabel(String(name), definition.key)
+      : '';
 
     return new Style({
       fill: new Fill({ color: definition.fill }),
@@ -212,7 +260,7 @@ function layerStyle(definition) {
         stroke: new Stroke({ color: '#ffffff', width: 2 }),
       }),
       text: new Text({
-        text: name,
+        text,
         offsetY: -15,
         font: '12px "Microsoft YaHei", sans-serif',
         fill: new Fill({ color: '#172033' }),
@@ -260,7 +308,7 @@ function readDisplayFeatures(data, baseLayerKey) {
 
 async function loadOverlayData(definition) {
   if (!overlayDataCache.has(definition.key)) {
-    overlayDataCache.set(definition.key, safeLoadGeoJson(definition.path));
+    overlayDataCache.set(definition.key, loadLayerGeoJson(definition));
   }
   return overlayDataCache.get(definition.key);
 }
@@ -272,7 +320,9 @@ async function createOverlayLayers() {
 
       try {
         const data = await loadOverlayData(definition);
-        source.addFeatures(readDisplayFeatures(data, props.baseLayerKey));
+        const features = readDisplayFeatures(data, props.baseLayerKey);
+        features.forEach((feature) => feature.set('layerKey', definition.key, true));
+        source.addFeatures(features);
       } catch (error) {
         console.warn(`图层加载失败：${definition.label}`, error);
       }
@@ -291,6 +341,66 @@ async function createOverlayLayers() {
   overlayLayers.value = Object.fromEntries(entries);
 }
 
+function createHeatmapLayers() {
+  heatmapLayers.value = Object.fromEntries(
+    HEATMAP_DEFS.map((definition) => [
+      definition.key,
+      new HeatmapLayer({
+        source: new VectorSource(),
+        blur: definition.blur,
+        radius: definition.radius,
+        weight: (feature) => Number(feature.get('weight') ?? 0.7),
+        visible: false,
+      }),
+    ]),
+  );
+  refreshHeatmapSources();
+  syncHeatmapState(props.heatmapState);
+}
+
+function refreshHeatmapSources() {
+  HEATMAP_DEFS.forEach((definition) => {
+    const heatmapLayer = heatmapLayers.value[definition.key];
+    const sourceLayer = overlayLayers.value[definition.sourceLayerKey];
+    if (!heatmapLayer || !sourceLayer) return;
+
+    const source = heatmapLayer.getSource();
+    source.clear();
+    sourceLayer
+      .getSource()
+      .getFeatures()
+      .forEach((feature) => {
+        const extent = feature.getGeometry()?.getExtent();
+        if (!extent) return;
+        const clone = feature.clone();
+        clone.setGeometry(new Point([(extent[0] + extent[2]) / 2, (extent[1] + extent[3]) / 2]));
+        const score = definition.key === 'greenHeatmap'
+          ? Number(feature.get('greenScore') ?? feature.get('score') ?? 80)
+          : Number(feature.get('riskWeight') ?? 50);
+        clone.set('weight', Math.max(0.1, Math.min(1, score / 100)));
+        source.addFeature(clone);
+      });
+  });
+}
+
+function updateHeatmapRendering() {
+  const zoom = map.value?.getView().getZoom() ?? 0;
+  HEATMAP_DEFS.forEach((definition) => {
+    const layer = heatmapLayers.value[definition.key];
+    if (!layer) return;
+    const userVisible = props.heatmapState[definition.key]?.visible ?? false;
+    const enabled = userVisible && zoom >= definition.minZoom;
+    layer.setVisible(enabled);
+    layer.setRadius(enabled ? Math.min(18, Math.max(7, 7 + (zoom - definition.minZoom) * 2.2)) : 7);
+    layer.setBlur(enabled ? Math.min(24, Math.max(9, 9 + (zoom - definition.minZoom) * 2.5)) : 9);
+    layer.setOpacity(enabled ? Math.min(0.72, Math.max(0.28, 0.32 + (zoom - definition.minZoom) * 0.08)) : 0);
+  });
+}
+
+function syncHeatmapState() {
+  updateHeatmapRendering();
+}
+
 async function refreshOverlayCoordinates(baseLayerKey) {
   await Promise.all(
     OVERLAY_LAYER_DEFS.map(async (definition) => {
@@ -301,12 +411,16 @@ async function refreshOverlayCoordinates(baseLayerKey) {
         const data = await loadOverlayData(definition);
         const source = layer.getSource();
         source.clear();
-        source.addFeatures(readDisplayFeatures(data, baseLayerKey));
+        const features = readDisplayFeatures(data, baseLayerKey);
+        features.forEach((feature) => feature.set('layerKey', definition.key, true));
+        source.addFeatures(features);
       } catch (error) {
         console.warn(`图层坐标刷新失败：${definition.label}`, error);
       }
     }),
   );
+  refreshHeatmapSources();
+  updateHeatmapRendering();
 }
 
 function syncOverlayState(state) {
@@ -380,6 +494,20 @@ function activateTool(toolKey) {
     return;
   }
 
+  if (toolKey === 'buffer') {
+    const displayLonLat = toDisplayLonLat(props.selectedLocation.lon, props.selectedLocation.lat);
+    const center = fromLonLat(displayLonLat);
+    const buffer = createBufferPolygonFromMapCoordinate(center, props.queryRadiusMeters);
+    querySource.clear();
+    querySource.addFeature(buffer);
+    const result = queryOverlayFeatures(buffer.getGeometry());
+    emit('tool-result', {
+      type: 'buffer',
+      message: `已生成当前评估点 ${props.queryRadiusMeters} m 缓冲区：共命中 ${result.total} 个专题要素，${result.detail}。`,
+    });
+    return;
+  }
+
   const config = DRAW_TOOL_CONFIG[toolKey];
   if (!config) return;
 
@@ -438,7 +566,40 @@ function deleteDrawnFeature(pixel) {
 
 function clearDrawings() {
   drawingSource.clear();
+  querySource.clear();
   emit('tool-result', { type: 'clearDrawings', message: '已清空所有绘制和测量要素。' });
+}
+
+function attributeFilter(keyword = '') {
+  const query = String(keyword).trim().toLowerCase();
+  const ignoredLayers = new Set(['nanningDemoBoundary', 'demoGrid']);
+  const matches = [];
+
+  OVERLAY_LAYER_DEFS.forEach((definition) => {
+    if (ignoredLayers.has(definition.key)) return;
+    const layer = overlayLayers.value[definition.key];
+    if (!layer?.getVisible()) return;
+
+    layer
+      .getSource()
+      .getFeatures()
+      .forEach((feature) => {
+        const haystack = ['name', 'category', 'tags', 'score', 'greenScore', 'riskType', 'serviceType', 'osmId', 'osm_id']
+          .map((key) => String(feature.get(key) ?? ''))
+          .join(' ')
+          .toLowerCase();
+        if (!query || haystack.includes(query)) {
+          const description = describeFeature(feature);
+          matches.push(`${definition.label}：${description.title}`);
+        }
+      });
+  });
+
+  const preview = matches.slice(0, 8).join('；');
+  emit('tool-result', {
+    type: 'attributeFilter',
+    message: `属性查询“${keyword || '全部要素'}”命中 ${matches.length} 条${preview ? `：${preview}` : '。'}`,
+  });
 }
 
 function exportMap() {
@@ -485,21 +646,18 @@ function handleToolCommand(command) {
   if (!command?.type) return;
   if (command.type === 'clearDrawings') clearDrawings();
   if (command.type === 'exportMap') exportMap();
+  if (command.type === 'attributeFilter') attributeFilter(command.keyword);
 }
 
 function showFeaturePopup(feature, pixel) {
+  const description = describeFeature(feature);
   popupState.value = {
     visible: true,
     left: pixel[0] + 14,
     top: pixel[1] + 14,
-    title: feature.get('name') ?? '未命名要素',
-    category: feature.get('category') ?? '专题要素',
-    description:
-      feature.get('cultureText') ??
-      feature.get('note') ??
-      feature.get('riskType') ??
-      feature.get('serviceType') ??
-      '静态 GeoJSON 演示数据',
+    title: description.title,
+    category: description.category,
+    description: description.detail,
   };
 }
 
@@ -540,16 +698,28 @@ function resetView() {
   });
 }
 
+function createBufferPolygonFromMapCoordinate(center, radiusMeters, sides = 64) {
+  const coords = Array.from({ length: sides + 1 }, (_, index) => {
+    const angle = (index / sides) * Math.PI * 2;
+    return [center[0] + Math.cos(angle) * radiusMeters, center[1] + Math.sin(angle) * radiusMeters];
+  });
+  return new Feature({
+    geometry: new Polygon([coords]),
+  });
+}
+
 onMounted(async () => {
   baseLayers.value = createBaseLayers();
   const overviewLayer = createOverviewLayer();
   await createOverlayLayers();
+  createHeatmapLayers();
 
   map.value = new Map({
     target: mapEl.value,
     layers: [
       ...Object.values(baseLayers.value),
       ...Object.values(overlayLayers.value),
+      ...Object.values(heatmapLayers.value),
       drawingLayer,
       queryLayer,
       markerLayer,
@@ -576,6 +746,8 @@ onMounted(async () => {
     }),
   });
 
+  map.value.getView().on('change:resolution', updateHeatmapRendering);
+
   map.value.on('click', (event) => {
     if (props.activeTool === 'delete') {
       deleteDrawnFeature(event.pixel);
@@ -593,8 +765,8 @@ onMounted(async () => {
       emit('feature-selected', {
         name: feature.get('name') ?? '未命名要素',
         category: feature.get('category') ?? '专题要素',
-        tags: feature.get('tags') ?? [],
-        cultureText: feature.get('cultureText') ?? '',
+          tags: feature.get('tags') ?? [],
+        cultureText: describeFeature(feature).detail,
         score: feature.get('score') ?? feature.get('greenScore') ?? feature.get('supportScore') ?? null,
       });
     } else {
@@ -618,6 +790,7 @@ onMounted(async () => {
   setBaseLayer(props.baseLayerKey);
   watchBaseLayerLoading(props.baseLayerKey);
   syncOverlayState(props.overlayState);
+  syncHeatmapState(props.heatmapState);
   updateMarker(props.selectedLocation);
   activateTool(props.activeTool);
 });
@@ -631,6 +804,12 @@ watch(
     updateMarker(props.selectedLocation);
     map.value?.getView().setCenter(fromLonLat(toDisplayLonLat(props.selectedLocation.lon, props.selectedLocation.lat, key)));
   },
+);
+
+watch(
+  () => props.heatmapState,
+  () => syncHeatmapState(),
+  { deep: true },
 );
 
 watch(

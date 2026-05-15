@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-05-11T22:23:54.783Z",
+  "bbox": "22.72,108.20,22.93,108.55",
+  "source": "OpenStreetMap via Overpass API",
+  "datasets": [
+    {
+      "key": "green_spaces",
+      "file": "osm_cache/green_spaces.geojson",
+      "featureCount": 796,
+      "description": "OSM/Overpass parks, gardens, woods and water features in Nanning"
+    },
+    {
+      "key": "medical_services",
+      "file": "osm_cache/medical_services.geojson",
+      "featureCount": 128,
+      "description": "OSM/Overpass hospitals, clinics and pharmacies in Nanning"
+    },
+    {
+      "key": "noise_risk_poi",
+      "file": "osm_cache/noise_risk_poi.geojson",
+      "featureCount": 9560,
+      "description": "OSM/Overpass roads and night activity POIs used by the noise-risk model"
+    },
+    {
+      "key": "culture_green_points",
+      "file": "osm_cache/culture_green_points.geojson",
+      "featureCount": 483,
+      "description": "OSM/Overpass ecological and cultural city places in Nanning"
+    }
+  ]
+}

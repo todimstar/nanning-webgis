@@ -11,6 +11,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  heatmapState: {
+    type: Object,
+    required: true,
+  },
   queryRadiusMeters: {
     type: Number,
     required: true,
@@ -20,6 +24,7 @@ const props = defineProps({
 const emit = defineEmits([
   'update:baseLayerKey',
   'update:overlayState',
+  'update:heatmapState',
   'update:queryRadiusMeters',
 ]);
 
@@ -28,6 +33,16 @@ function updateOverlay(key, patch) {
     ...props.overlayState,
     [key]: {
       ...props.overlayState[key],
+      ...patch,
+    },
+  });
+}
+
+function updateHeatmap(key, patch) {
+  emit('update:heatmapState', {
+    ...props.heatmapState,
+    [key]: {
+      ...props.heatmapState[key],
       ...patch,
     },
   });
@@ -91,6 +106,36 @@ function updateOverlay(key, patch) {
         @input="emit('update:queryRadiusMeters', Number($event.target.value))"
       />
       <strong>{{ queryRadiusMeters }} m</strong>
+    </div>
+  </section>
+
+  <section class="panel-block">
+    <h2>热力图</h2>
+    <div class="overlay-list">
+      <label class="overlay-row">
+        <span class="overlay-main">
+          <input
+            type="checkbox"
+            :checked="heatmapState.greenHeatmap?.visible"
+            @change="updateHeatmap('greenHeatmap', { visible: $event.target.checked })"
+          />
+          <i style="background: #17803d"></i>
+          <strong>绿城友好度热力</strong>
+        </span>
+        <small class="layer-note">放大到街区级别后显示，避免缩小时覆盖全图。</small>
+      </label>
+      <label class="overlay-row">
+        <span class="overlay-main">
+          <input
+            type="checkbox"
+            :checked="heatmapState.noiseHeatmap?.visible"
+            @change="updateHeatmap('noiseHeatmap', { visible: $event.target.checked })"
+          />
+          <i style="background: #dc2626"></i>
+          <strong>噪音风险热力</strong>
+        </span>
+        <small class="layer-note">放大到街区级别后显示，基于 OSM 道路和夜间活动点。</small>
+      </label>
     </div>
   </section>
 </template>

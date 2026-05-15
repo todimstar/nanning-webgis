@@ -29,6 +29,10 @@ const loading = ref(false);
 const apiError = ref('');
 const baseLayerKey = ref('amap');
 const overlayState = ref(createDefaultOverlayState());
+const heatmapState = ref({
+  greenHeatmap: { visible: false },
+  noiseHeatmap: { visible: false },
+});
 const queryRadiusMeters = ref(900);
 const activeTool = ref('inspect');
 const toolCommand = ref({ id: 0, type: '' });
@@ -109,10 +113,11 @@ async function loadScoreConfig() {
   }
 }
 
-function runToolCommand(type) {
+function runToolCommand(command) {
+  const payload = typeof command === 'string' ? { type: command } : command;
   toolCommand.value = {
     id: Date.now(),
-    type,
+    ...payload,
   };
 }
 
@@ -187,6 +192,7 @@ onMounted(async () => {
       <LayerPanel
         v-model:base-layer-key="baseLayerKey"
         v-model:overlay-state="overlayState"
+        v-model:heatmap-state="heatmapState"
         v-model:query-radius-meters="queryRadiusMeters"
       />
 
@@ -211,6 +217,7 @@ onMounted(async () => {
       <MapView
         :base-layer-key="baseLayerKey"
         :overlay-state="overlayState"
+        :heatmap-state="heatmapState"
         :selected-location="selectedLocation"
         :query-radius-meters="queryRadiusMeters"
         :active-tool="activeTool"
