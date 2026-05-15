@@ -4,6 +4,9 @@ build/
 .DS_Store
 *.log
 *.env
+server/.env
+*key.txt
+*Key.txt
 .vite/
 /.idea/
 .vscode/

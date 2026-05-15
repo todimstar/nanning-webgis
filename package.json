@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0"
+    "preview": "vite preview --host 0.0.0.0",
+    "server:start": "npm --prefix server run start",
+    "server:check": "npm --prefix server run check"
   },
   "dependencies": {
     "ol": "^10.6.1",

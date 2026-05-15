@@ -1,10 +1,11 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import MapView from './components/MapView.vue';
 import ProfileSelector from './components/ProfileSelector.vue';
 import LayerPanel from './components/LayerPanel.vue';
 import ToolPanel from './components/ToolPanel.vue';
 import AnalysisPanel from './components/AnalysisPanel.vue';
+import { fetchAmapRegeocode, requestAiExplanation } from './api/backend.js';
 import { fetchEnvironment } from './api/openMeteo.js';
 import { DEFAULT_SCORE_CONFIG, computeAssessment } from './model/scoreModel.js';
 import { buildExplanation } from './model/explainModel.js';
@@ -20,9 +21,13 @@ const selectedLocation = ref(NANNING_CENTER);
 const environment = ref(null);
 const greenCityData = ref({});
 const selectedFeature = ref(null);
+const locationContext = ref(null);
+const explanation = ref(null);
+const explanationLoading = ref(false);
+const explanationNotice = ref('');
 const loading = ref(false);
 const apiError = ref('');
-const baseLayerKey = ref('osm');
+const baseLayerKey = ref('amap');
 const overlayState = ref(createDefaultOverlayState());
 const queryRadiusMeters = ref(900);
 const activeTool = ref('inspect');
@@ -41,14 +46,57 @@ const assessment = computed(() => {
   });
 });
 
-const explanation = computed(() => {
+const activeProfile = computed(() => ({
+  key: selectedProfile.value,
+  ...scoreConfig.value.profiles[selectedProfile.value],
+}));
+
+const ruleExplanation = computed(() => {
   if (!assessment.value) return null;
   return buildExplanation({
     assessment: assessment.value,
-    profile: scoreConfig.value.profiles[selectedProfile.value],
+    profile: activeProfile.value,
     environment: environment.value,
   });
 });
+
+let explanationRequestId = 0;
+
+async function refreshExplanation() {
+  const fallback = ruleExplanation.value;
+  if (!fallback || !assessment.value) {
+    explanation.value = null;
+    return;
+  }
+
+  const requestId = ++explanationRequestId;
+  explanation.value = fallback;
+  explanationLoading.value = true;
+  explanationNotice.value = '正在请求后端 AI 解释；不可用时自动保留规则式解释。';
+
+  try {
+    const result = await requestAiExplanation({
+      location: selectedLocation.value,
+      profile: activeProfile.value,
+      environment: environment.value,
+      assessment: assessment.value,
+      locationContext: locationContext.value,
+    });
+    if (requestId !== explanationRequestId) return;
+    explanation.value = result.explanation ?? fallback;
+    explanationNotice.value =
+      result.explanation?.provider === 'ai'
+        ? '已接入后端 AI API 生成解释。'
+        : 'AI API 未配置或暂不可用，当前使用后端规则式解释。';
+  } catch (error) {
+    if (requestId !== explanationRequestId) return;
+    console.warn('后端解释接口不可用，使用前端规则式解释：', error);
+    explanation.value = fallback;
+    explanationNotice.value = '后端解释接口不可用，当前使用前端规则式解释。';
+  } finally {
+    if (requestId === explanationRequestId) explanationLoading.value = false;
+  }
+}
 
 async function loadScoreConfig() {
   try {
@@ -72,9 +120,19 @@ async function evaluateLocation(location) {
   selectedLocation.value = location;
   loading.value = true;
   apiError.value = '';
+  locationContext.value = null;
 
   try {
-    environment.value = await fetchEnvironment(location);
+    const [environmentResult, geocodeResult] = await Promise.all([
+      fetchEnvironment(location),
+      fetchAmapRegeocode(location).catch((error) => {
+        console.warn('高德逆地理编码不可用：', error);
+        return null;
+      }),
+    ]);
+
+    environment.value = environmentResult;
+    locationContext.value = geocodeResult?.ok ? geocodeResult : null;
     if (environment.value.unavailable) {
       apiError.value = '实时环境数据暂不可用';
     }
@@ -102,6 +160,10 @@ async function loadLayerData() {
     greenCityData.value = {};
   }
 }
+
+watch([ruleExplanation, locationContext], () => {
+  refreshExplanation();
+});
 
 onMounted(async () => {
   await Promise.all([loadScoreConfig(), loadLayerData()]);
@@ -162,9 +224,13 @@ onMounted(async () => {
     <aside class="side-panel right-panel">
       <AnalysisPanel
         :location="selectedLocation"
+        :location-context="locationContext"
+        :profile="activeProfile"
         :environment="environment"
         :assessment="assessment"
         :explanation="explanation"
+        :explanation-loading="explanationLoading"
+        :explanation-notice="explanationNotice"
         :selected-feature="selectedFeature"
         :query-radius-meters="queryRadiusMeters"
         :tool-result="toolResult"

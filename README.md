@@ -1,19 +1,22 @@
 # 绿城知境 WebGIS
 
-面向敏感人群的南宁生态文化与健康环境 WebGIS 平台。项目使用 Vue 3 + Vite + OpenLayers 实现，保持纯前端架构，适合课程作业展示、GitHub Pages 部署和后续逐步补齐 WebGIS 工具链。
+面向敏感人群的南宁生态文化与健康环境 WebGIS 平台。当前实现以 Vue 3 + Vite + OpenLayers 为前端主体，并加入轻量 Node 后端，用于保护高德 Web 服务 Key、AI API Key，以及提供可选 MySQL 留痕。
 
 ## 当前方向
 
-本分支以“绿城知境”为主方向，不再沿用仓库旧的居住候选点选题叙事。旧代码和文档仅作为历史参考，本分支优先实现：
+本分支以“绿城知境”为主方向，不再沿用仓库旧的居住候选点选题叙事。旧提交保留为项目来时路，当前演示优先覆盖：
 
-- 南宁三种公开底图：OSM 标准、Esri 影像、CARTO 深色。
-- 绿地与水系、医疗与药店、噪音风险点、绿城生态文化点、评估网格 5 类专题图层。
-- 图层显示/隐藏、透明度调整、空间查询半径调整。
-- 点击地图获取 Open-Meteo 天气和空气质量数据。
-- 按呼吸道敏感、皮肤敏感、睡眠浅、普通宜居 4 种画像计算综合适宜度。
-- 结合周边生态文化、绿地、医疗和噪音风险生成规则式解释。
+- 三种底图：高德标准（默认）、OSM 标准、Esri 影像。
+- 绿地与水系、医疗与药店、噪音风险点、绿城生态文化点、评估网格专题图层。
+- 点击地图任意位置后读取 Open-Meteo 天气与空气质量数据。
+- 通过高德 Web 服务后端接口获取逆地理位置，避免前端暴露 key。
+- 按呼吸道敏感、皮肤敏感、睡眠浅、综合绿城生活 4 种画像计算综合适宜度。
+- 后端 AI 解释接口优先调用真实 AI API，未配置或失败时降级为规则式解释。
+- 导出直观 HTML 评估摘要，可选写入 MySQL。
 
 ## 本地运行
+
+前端：
 
 ```bash
 npm install
@@ -21,30 +24,56 @@ npm run dev
 npm run build
 ```
 
-开发服务器启动后访问终端提示的本地地址，例如 `http://127.0.0.1:5173/`。
+后端：
+
+```bash
+cd server
+npm install
+copy .env.example .env
+npm run start
+```
+
+前端默认请求 `http://127.0.0.1:8787`。如需改后端地址，在前端 `.env.local` 中设置：
+
+```bash
+VITE_API_BASE_URL=http://127.0.0.1:8787
+```
+
+后端环境变量见 `server/.env.example`。真实的 `高德key.txt`、`.env` 和 `.env.local` 不应提交。
 
 ## 数据来源
 
-初版使用 `public/data/` 下的演示 GeoJSON 保证可演示：
+初版使用 `public/data/` 下的静态 GeoJSON 保证可演示：
 
 - `green_spaces.geojson`
 - `medical_services.geojson`
 - `culture_green_points.geojson`
 - `noise_risk_poi.geojson`
 - `demo_grid.geojson`
+- `nanning_demo_boundary.geojson`
 
-后续可以用 `scripts/fetch-overpass-nanning.mjs` 或 Overpass 查询结果替换为更完整的南宁 OSM 静态数据。
+后续可用 `scripts/fetch-overpass-nanning.mjs` 或 Overpass 查询结果替换为更完整的南宁 OSM 静态数据。底图慢加载主要来自境外瓦片源，因此默认改为高德标准底图；OSM 和 Esri 仍保留用于对比。
 
-## 下一阶段
+## MySQL
+
+MySQL 是轻量增强，不是前端运行硬依赖。需要落库时：
+
+```bash
+cd server
+mysql -u root -p < db/schema.sql
+```
+
+再配置 `server/.env` 中的 `MYSQL_*`。未配置 MySQL 时，后端仍提供高德逆地理编码、AI 解释降级和本地 HTML 导出。
 
 ## 阶段状态
 
 - 阶段 1：底图与地图控件已完成。
 - 阶段 2：静态 GeoJSON 图层、样式、图层显隐、透明度、点选弹窗和右侧要素详情已完成。
-- 超前实现：Open-Meteo、四模式评分、规则式解释，以及部分阶段 3 工具（绘制、编辑、测量、框选/圆选、导出）已提前接入，后续按阶段验收时继续补属性筛选、缓冲区、叠加分析和热力图。
+- 超前实现：Open-Meteo、四模式评分、后端 AI 解释降级、绘制/编辑/测量/框选/圆选、地图 PNG 导出、HTML 摘要导出已接入。
 
 ## 后续阶段
 
-- 阶段 3 剩余：属性过滤、缓冲区分析、叠加分析。
-- 阶段 6：绿城友好度热力图、噪音风险热力图、更完整的动态趋势图。
-- 阶段 7：课程报告展示材料、GitHub Pages 部署说明。
+- 属性过滤、缓冲区分析、叠加分析。
+- 评分模型科学依据整理与毕业设计化论证。
+- 真实 OSM/Overpass 数据定期抓取与缓存更新。
+- 更完整的动态趋势图与展示材料。

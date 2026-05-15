@@ -1,10 +1,20 @@
 <script setup>
 import { computed } from 'vue';
+import { saveReport } from '../api/backend.js';
+import { buildReportHtml, downloadHtml } from '../utils/reportExport.js';
 
 const props = defineProps({
   location: {
     type: Object,
     required: true,
+  },
+  locationContext: {
+    type: Object,
+    default: null,
+  },
+  profile: {
+    type: Object,
+    default: null,
   },
   environment: {
     type: Object,
@@ -17,6 +27,14 @@ const props = defineProps({
   explanation: {
     type: Object,
     default: null,
+  },
+  explanationLoading: {
+    type: Boolean,
+    default: false,
+  },
+  explanationNotice: {
+    type: String,
+    default: '',
   },
   selectedFeature: {
     type: Object,
@@ -47,7 +65,7 @@ function valueOrDash(value, unit = '') {
 
 const trendSamples = computed(() => {
   const hourly = props.environment?.hourly ?? [];
-  return hourly.slice(0, 12).map((item) => ({
+  return hourly.slice(0, 24).map((item) => ({
     label: item.time ? new Date(item.time).getHours().toString().padStart(2, '0') : '--',
     temperature: item.temperature ?? 0,
     pm25: item.pm25 ?? 0,
@@ -58,6 +76,31 @@ const trendMax = computed(() => {
   const values = trendSamples.value.flatMap((item) => [item.temperature, item.pm25]);
   return Math.max(1, ...values);
 });
+
+async function exportHtmlReport() {
+  if (!props.assessment || !props.environment || !props.explanation) return;
+
+  const html = buildReportHtml({
+    location: props.location,
+    profile: props.profile,
+    environment: props.environment,
+    assessment: props.assessment,
+    explanation: props.explanation,
+    locationContext: props.locationContext,
+  });
+  downloadHtml(`green-city-report-${Date.now()}.html`, html);
+
+  try {
+    await saveReport({
+      title: '绿城知境评估摘要',
+      profileKey: props.profile?.key ?? 'unknown',
+      location: props.location,
+      html,
+    });
+  } catch (error) {
+    console.warn('报告后端保存不可用，已完成本地 HTML 导出：', error);
+  }
+}
 </script>
 
 <template>
@@ -66,6 +109,9 @@ const trendMax = computed(() => {
       <div>
         <p class="eyebrow">当前评估点</p>
         <h2>{{ location.lon.toFixed(5) }}, {{ location.lat.toFixed(5) }}</h2>
+        <p v-if="locationContext?.formattedAddress" class="address-text">
+          {{ locationContext.formattedAddress }}
+        </p>
       </div>
       <span class="source-pill">{{ environment?.unavailable ? '实时暂不可用' : environment?.source || '等待数据' }}</span>
     </div>
@@ -81,6 +127,10 @@ const trendMax = computed(() => {
         </div>
         <strong>{{ assessment.score }}</strong>
       </div>
+
+      <button class="export-report-button" type="button" @click="exportHtmlReport">
+        导出 HTML 评估摘要
+      </button>
 
       <div class="metric-grid">
         <article>
@@ -180,9 +230,23 @@ const trendMax = computed(() => {
         </div>
       </section>
 
-      <section class="data-block">
-        <h2>未来 12 小时快览</h2>
-        <div class="mini-trend" aria-label="未来 12 小时温度和 AQI 快览">
+      <section class="data-block explanation-block">
+        <h2>规则式 AI 解释</h2>
+        <div v-if="explanationNotice" class="explanation-notice">
+          {{ explanationLoading ? '生成中：' : '' }}{{ explanationNotice }}
+        </div>
+        <p class="explain-summary">{{ explanation.summary }}</p>
+        <p><strong>优势：</strong>{{ explanation.strengths }}</p>
+        <p><strong>风险：</strong>{{ explanation.risks }}</p>
+        <p><strong>建议：</strong>{{ explanation.advice }}</p>
+      </section>
+
+      <section class="data-block trend-block">
+        <h2>南宁区域未来 24 小时环境趋势参考</h2>
+        <p class="trend-note">
+          数据来源：Open-Meteo hourly forecast。该趋势用于展示区域环境背景，不代表街道级实测值，也不直接参与当前点位评分。
+        </p>
+        <div class="mini-trend" aria-label="未来 24 小时温度和 PM2.5 趋势参考">
           <div
             v-for="point in trendSamples"
             :key="point.label"
@@ -205,14 +269,6 @@ const trendMax = computed(() => {
           <span><i class="legend-temp"></i>温度</span>
           <span><i class="legend-aqi"></i>PM2.5</span>
         </div>
-      </section>
-
-      <section class="data-block explanation-block">
-        <h2>规则式 AI 解释</h2>
-        <p class="explain-summary">{{ explanation.summary }}</p>
-        <p><strong>优势：</strong>{{ explanation.strengths }}</p>
-        <p><strong>风险：</strong>{{ explanation.risks }}</p>
-        <p><strong>建议：</strong>{{ explanation.advice }}</p>
       </section>
     </template>
   </section>

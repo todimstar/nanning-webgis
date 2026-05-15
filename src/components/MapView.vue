@@ -16,6 +16,7 @@ import VectorSource from 'ol/source/Vector';
 import { Circle as CircleStyle, Fill, Stroke, Style, Text } from 'ol/style';
 import { fromLonLat, toLonLat } from 'ol/proj';
 import { getArea, getLength } from 'ol/sphere';
+import { unByKey } from 'ol/Observable';
 import { createBaseLayers, createOverviewLayer } from '../gis/baseLayers.js';
 import { NANNING_CENTER, OVERLAY_LAYER_DEFS, safeLoadGeoJson } from '../data/greenCityData.js';
 import { gcj02ToWgs84, wgs84ToGcj02 } from '../utils/coordTransform.js';
@@ -61,11 +62,17 @@ const popupState = ref({
 const map = shallowRef(null);
 const baseLayers = shallowRef({});
 const overlayLayers = shallowRef({});
+const baseLayerLoadState = ref({
+  pending: 0,
+  errors: 0,
+  slow: false,
+});
 const markerSource = new VectorSource();
 const querySource = new VectorSource();
 const drawingSource = new VectorSource();
 const geoJsonFormat = new GeoJSON();
 const activeInteraction = shallowRef(null);
+const overlayDataCache = new Map();
 
 const markerLayer = new VectorLayer({
   source: markerSource,
@@ -121,6 +128,69 @@ const DRAW_TOOL_CONFIG = {
   circleQuery: { type: 'Circle', label: '圆选查询', query: 'circle' },
 };
 
+const SLOW_BASE_LAYER_LABELS = {
+  osm: 'OSM 标准底图来自境外公开瓦片源，课堂网络下可能加载较慢；演示时建议切回高德标准底图。',
+  esriImagery: 'Esri 影像来自境外公开瓦片源，课堂网络下可能加载较慢；影像未显示完整时可先使用高德标准底图讲解。',
+};
+
+let baseLayerLoadTimer = null;
+let baseLayerListenerCleanups = [];
+
+function clearBaseLayerLoadListeners() {
+  baseLayerListenerCleanups.forEach((cleanup) => cleanup());
+  baseLayerListenerCleanups = [];
+  if (baseLayerLoadTimer) {
+    window.clearTimeout(baseLayerLoadTimer);
+    baseLayerLoadTimer = null;
+  }
+}
+
+function watchBaseLayerLoading(key) {
+  clearBaseLayerLoadListeners();
+  baseLayerLoadState.value = {
+    pending: 0,
+    errors: 0,
+    slow: false,
+  };
+
+  const source = baseLayers.value[key]?.getSource?.();
+  if (!source?.on) return;
+
+  const startKey = source.on('tileloadstart', () => {
+    baseLayerLoadState.value.pending += 1;
+    if (!baseLayerLoadTimer) {
+      baseLayerLoadTimer = window.setTimeout(() => {
+        if (baseLayerLoadState.value.pending > 0) {
+          baseLayerLoadState.value.slow = true;
+        }
+      }, 7000);
+    }
+  });
+
+  const finish = () => {
+    baseLayerLoadState.value.pending = Math.max(0, baseLayerLoadState.value.pending - 1);
+    if (baseLayerLoadState.value.pending === 0 && baseLayerLoadTimer) {
+      window.clearTimeout(baseLayerLoadTimer);
+      baseLayerLoadTimer = null;
+    }
+  };
+
+  const endKey = source.on('tileloadend', finish);
+  const errorKey = source.on('tileloaderror', () => {
+    baseLayerLoadState.value.errors += 1;
+    baseLayerLoadState.value.slow = true;
+    finish();
+  });
+
+  baseLayerListenerCleanups = [startKey, endKey, errorKey].map((eventKey) => () => unByKey(eventKey));
+}
+
+function baseLayerNotice() {
+  if (SLOW_BASE_LAYER_LABELS[props.baseLayerKey]) return SLOW_BASE_LAYER_LABELS[props.baseLayerKey];
+  if (baseLayerLoadState.value.slow) return '当前底图加载较慢，请稍候，或切换到高德标准底图继续演示。';
+  return '';
+}
+
 function setBaseLayer(key) {
   Object.entries(baseLayers.value).forEach(([layerKey, layer]) => {
     layer.setVisible(layerKey === key);
@@ -152,19 +222,57 @@ function layerStyle(definition) {
   };
 }
 
+function toDisplayLonLat(lon, lat, baseLayerKey = props.baseLayerKey) {
+  return baseLayerKey === 'amap' ? wgs84ToGcj02(lon, lat) : [lon, lat];
+}
+
+function transformWgs84FeatureToDisplay(feature, baseLayerKey) {
+  const geometry = feature.getGeometry();
+  if (!geometry) return feature;
+
+  if (baseLayerKey === 'amap') {
+    geometry.applyTransform((flatCoordinates, flatCoordinates2, stride) => {
+      const output = flatCoordinates2 || flatCoordinates;
+      for (let index = 0; index < flatCoordinates.length; index += stride) {
+        const [lon, lat] = wgs84ToGcj02(flatCoordinates[index], flatCoordinates[index + 1]);
+        output[index] = lon;
+        output[index + 1] = lat;
+        for (let offset = 2; offset < stride; offset += 1) {
+          output[index + offset] = flatCoordinates[index + offset];
+        }
+      }
+      return output;
+    });
+  }
+
+  geometry.transform('EPSG:4326', 'EPSG:3857');
+  return feature;
+}
+
+function readDisplayFeatures(data, baseLayerKey) {
+  return geoJsonFormat
+    .readFeatures(data, {
+      dataProjection: 'EPSG:4326',
+      featureProjection: 'EPSG:4326',
+    })
+    .map((feature) => transformWgs84FeatureToDisplay(feature, baseLayerKey));
+}
+
+async function loadOverlayData(definition) {
+  if (!overlayDataCache.has(definition.key)) {
+    overlayDataCache.set(definition.key, safeLoadGeoJson(definition.path));
+  }
+  return overlayDataCache.get(definition.key);
+}
+
 async function createOverlayLayers() {
   const entries = await Promise.all(
     OVERLAY_LAYER_DEFS.map(async (definition) => {
       const source = new VectorSource();
 
       try {
-        const data = await safeLoadGeoJson(definition.path);
-        source.addFeatures(
-          geoJsonFormat.readFeatures(data, {
-            dataProjection: 'EPSG:4326',
-            featureProjection: 'EPSG:3857',
-          }),
-        );
+        const data = await loadOverlayData(definition);
+        source.addFeatures(readDisplayFeatures(data, props.baseLayerKey));
       } catch (error) {
         console.warn(`图层加载失败：${definition.label}`, error);
       }
@@ -181,6 +289,24 @@ async function createOverlayLayers() {
   );
 
   overlayLayers.value = Object.fromEntries(entries);
+}
+
+async function refreshOverlayCoordinates(baseLayerKey) {
+  await Promise.all(
+    OVERLAY_LAYER_DEFS.map(async (definition) => {
+      const layer = overlayLayers.value[definition.key];
+      if (!layer) return;
+
+      try {
+        const data = await loadOverlayData(definition);
+        const source = layer.getSource();
+        source.clear();
+        source.addFeatures(readDisplayFeatures(data, baseLayerKey));
+      } catch (error) {
+        console.warn(`图层坐标刷新失败：${definition.label}`, error);
+      }
+    }),
+  );
 }
 
 function syncOverlayState(state) {
@@ -382,10 +508,7 @@ function hidePopup() {
 }
 
 function updateMarker(location) {
-  const displayLonLat =
-    props.baseLayerKey === 'amap'
-      ? wgs84ToGcj02(location.lon, location.lat)
-      : [location.lon, location.lat];
+  const displayLonLat = toDisplayLonLat(location.lon, location.lat);
 
   markerSource.clear();
   markerSource.addFeature(
@@ -397,10 +520,7 @@ function updateMarker(location) {
 }
 
 function updateQueryCircle(location) {
-  const displayLonLat =
-    props.baseLayerKey === 'amap'
-      ? wgs84ToGcj02(location.lon, location.lat)
-      : [location.lon, location.lat];
+  const displayLonLat = toDisplayLonLat(location.lon, location.lat);
 
   querySource.clear();
   querySource.addFeature(
@@ -411,10 +531,7 @@ function updateQueryCircle(location) {
 }
 
 function resetView() {
-  const center =
-    props.baseLayerKey === 'amap'
-      ? wgs84ToGcj02(NANNING_CENTER.lon, NANNING_CENTER.lat)
-      : [NANNING_CENTER.lon, NANNING_CENTER.lat];
+  const center = toDisplayLonLat(NANNING_CENTER.lon, NANNING_CENTER.lat);
 
   map.value?.getView().animate({
     center: fromLonLat(center),
@@ -452,7 +569,7 @@ onMounted(async () => {
       }),
     ]),
     view: new View({
-      center: fromLonLat([NANNING_CENTER.lon, NANNING_CENTER.lat]),
+      center: fromLonLat(toDisplayLonLat(NANNING_CENTER.lon, NANNING_CENTER.lat)),
       zoom: 11,
       minZoom: 9,
       maxZoom: 18,
@@ -499,6 +616,7 @@ onMounted(async () => {
   });
 
   setBaseLayer(props.baseLayerKey);
+  watchBaseLayerLoading(props.baseLayerKey);
   syncOverlayState(props.overlayState);
   updateMarker(props.selectedLocation);
   activateTool(props.activeTool);
@@ -506,9 +624,12 @@ onMounted(async () => {
 
 watch(
   () => props.baseLayerKey,
-  (key) => {
+  async (key) => {
     setBaseLayer(key);
+    watchBaseLayerLoading(key);
+    await refreshOverlayCoordinates(key);
     updateMarker(props.selectedLocation);
+    map.value?.getView().setCenter(fromLonLat(toDisplayLonLat(props.selectedLocation.lon, props.selectedLocation.lat, key)));
   },
 );
 
@@ -541,6 +662,7 @@ watch(
 
 onBeforeUnmount(() => {
   clearActiveInteraction();
+  clearBaseLayerLoadListeners();
   map.value?.setTarget(undefined);
 });
 </script>
@@ -549,6 +671,9 @@ onBeforeUnmount(() => {
   <div class="map-wrap">
     <div ref="mapEl" class="map-canvas"></div>
     <button class="reset-button" type="button" @click="resetView">复位南宁</button>
+    <div v-if="baseLayerNotice()" class="map-load-notice">
+      {{ baseLayerNotice() }}
+    </div>
     <div
       v-if="popupState.visible"
       class="feature-popup"

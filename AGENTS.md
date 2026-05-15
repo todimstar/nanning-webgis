@@ -9,13 +9,13 @@
 ## 项目边界
 
 1. 使用 Vue 3 + Vite + OpenLayers。
-2. 保持纯前端，不引入后端、数据库、登录注册或真实大模型 API。
-3. 项目必须能 `npm install`、`npm run dev`、`npm run build`。
+2. 前端仍以 Vue 3 单页应用为主，但允许保留 `server/` 轻量 Node 后端，用于保护高德 Web 服务 Key、AI API Key，以及可选 MySQL 留痕。
+3. 项目必须能 `npm install`、`npm run dev`、`npm run build`；后端应能 `npm run server:check`，没有 MySQL 时必须优雅降级。
 4. Open-Meteo API 可直接在前端调用，不需要 API Key。
 5. OSM/Overpass 数据优先抓取后保存为本地 GeoJSON，前端加载静态文件。
 6. 抓取失败时允许使用 `public/data/` 下的演示 GeoJSON 保证可演示。
 7. 噪音使用规则式夜间噪音风险模型，不依赖真实噪音 API。
-8. 解释使用规则式“AI 解释”，不调用外部 LLM。
+8. 解释优先通过后端调用真实 AI API；未配置或调用失败时使用规则式解释降级，并在界面中明示。
 
 ## 核心数据与指标
 

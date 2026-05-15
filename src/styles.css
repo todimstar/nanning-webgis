@@ -343,6 +343,24 @@ h2 {
   cursor: pointer;
 }
 
+.map-load-notice {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 3;
+  width: min(560px, calc(100% - 32px));
+  padding: 10px 12px;
+  border: 1px solid rgba(217, 119, 6, 0.22);
+  border-radius: 8px;
+  background: rgba(255, 251, 235, 0.94);
+  color: #6b4f12;
+  box-shadow: var(--shadow-panel);
+  font-size: 13px;
+  line-height: 1.5;
+  pointer-events: none;
+}
+
 .feature-popup strong,
 .feature-popup span {
   display: block;
@@ -389,6 +407,12 @@ h2 {
 .analysis-header h2 {
   margin: 0;
   font-size: 18px;
+}
+
+.address-text {
+  margin: 6px 0 0;
+  color: var(--color-muted);
+  font-size: 12px;
 }
 
 .source-pill {
@@ -451,6 +475,22 @@ h2 {
   color: #f4d35e;
   font-size: 20px;
   font-weight: 800;
+}
+
+.export-report-button {
+  min-height: 84px;
+  padding: 14px;
+  border: 1px solid #bbd7ff;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #17326d;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.export-report-button:hover {
+  border-color: #1e40af;
+  background: #dbeafe;
 }
 
 .metric-grid {
@@ -547,8 +587,8 @@ h2 {
 
 .mini-trend {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(24, 1fr);
+  gap: 4px;
   align-items: end;
   min-height: 104px;
 }
@@ -615,6 +655,16 @@ h2 {
   color: #102a5c;
 }
 
+.explanation-notice {
+  margin-bottom: 10px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  background: #fff7df;
+  color: #745418;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .analysis p {
   margin-bottom: 8px;
   color: #35463f;
@@ -624,6 +674,11 @@ h2 {
 .explanation-block {
   border-color: #fed7aa;
   background: #fffaf2;
+}
+
+.trend-note {
+  color: var(--color-muted);
+  font-size: 12px;
 }
 
 .feature-block {

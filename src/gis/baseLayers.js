@@ -1,5 +1,4 @@
 import TileLayer from 'ol/layer/Tile';
-import OSM from 'ol/source/OSM';
 import XYZ from 'ol/source/XYZ';
 
 const AMAP_VECTOR_URLS = [1, 2, 3, 4].map(
@@ -8,19 +7,23 @@ const AMAP_VECTOR_URLS = [1, 2, 3, 4].map(
 );
 
 export const BASE_LAYER_OPTIONS = [
-  { key: 'osm', label: 'OSM 标准' },
-  { key: 'amap', label: '高德标准' },
-  { key: 'esriImagery', label: 'Esri 影像' },
+  { key: 'amap', label: '高德标准（默认）' },
+  { key: 'osm', label: 'OSM 标准（境外源）' },
+  { key: 'esriImagery', label: 'Esri 影像（境外源）' },
 ];
 
 export function createBaseLayers() {
   return {
     osm: new TileLayer({
-      visible: true,
-      source: new OSM(),
+      visible: false,
+      source: new XYZ({
+        url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        crossOrigin: 'anonymous',
+        attributions: '© OpenStreetMap contributors',
+      }),
     }),
     amap: new TileLayer({
-      visible: false,
+      visible: true,
       source: new XYZ({
         urls: AMAP_VECTOR_URLS,
         attributions: '© 高德地图',
@@ -33,18 +36,14 @@ export function createBaseLayers() {
         attributions: 'Tiles © Esri',
       }),
     }),
-    cartoDark: new TileLayer({
-      visible: false,
-      source: new XYZ({
-        url: 'https://{a-d}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-        attributions: '© CARTO © OpenStreetMap contributors',
-      }),
-    }),
   };
 }
 
 export function createOverviewLayer() {
   return new TileLayer({
-    source: new OSM(),
+    source: new XYZ({
+      urls: AMAP_VECTOR_URLS,
+      attributions: '© 高德地图',
+    }),
   });
 }

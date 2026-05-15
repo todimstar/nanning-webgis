@@ -56,6 +56,7 @@ function buildWeatherUrl(lat, lon) {
     ].join(','),
   );
   url.searchParams.set('timezone', TIMEZONE);
+  url.searchParams.set('forecast_hours', '24');
   return url.toString();
 }
 
@@ -69,6 +70,7 @@ function buildAirUrl(lat, lon) {
   );
   url.searchParams.set('hourly', ['pm10', 'pm2_5', 'uv_index'].join(','));
   url.searchParams.set('timezone', TIMEZONE);
+  url.searchParams.set('forecast_hours', '24');
   return url.toString();
 }
 
