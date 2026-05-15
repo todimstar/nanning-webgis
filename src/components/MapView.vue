@@ -7,14 +7,18 @@ import View from 'ol/View';
 import Circle from 'ol/geom/Circle';
 import Point from 'ol/geom/Point';
 import VectorLayer from 'ol/layer/Vector';
+import Draw, { createBox } from 'ol/interaction/Draw';
+import Modify from 'ol/interaction/Modify';
 import { OverviewMap, ScaleLine, FullScreen, defaults as defaultControls } from 'ol/control';
 import { createStringXY } from 'ol/coordinate';
 import MousePosition from 'ol/control/MousePosition';
 import VectorSource from 'ol/source/Vector';
 import { Circle as CircleStyle, Fill, Stroke, Style, Text } from 'ol/style';
 import { fromLonLat, toLonLat } from 'ol/proj';
+import { getArea, getLength } from 'ol/sphere';
 import { createBaseLayers, createOverviewLayer } from '../gis/baseLayers.js';
-import { NANNING_CENTER, OVERLAY_LAYER_DEFS } from '../data/greenCityData.js';
+import { NANNING_CENTER, OVERLAY_LAYER_DEFS, safeLoadGeoJson } from '../data/greenCityData.js';
+import { gcj02ToWgs84, wgs84ToGcj02 } from '../utils/coordTransform.js';
 
 const props = defineProps({
   baseLayerKey: {
@@ -33,17 +37,35 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  activeTool: {
+    type: String,
+    default: 'inspect',
+  },
+  toolCommand: {
+    type: Object,
+    default: () => ({ id: 0, type: '' }),
+  },
 });
 
-const emit = defineEmits(['location-selected', 'feature-selected']);
+const emit = defineEmits(['location-selected', 'feature-selected', 'tool-result']);
 
 const mapEl = ref(null);
+const popupState = ref({
+  visible: false,
+  left: 0,
+  top: 0,
+  title: '',
+  category: '',
+  description: '',
+});
 const map = shallowRef(null);
 const baseLayers = shallowRef({});
 const overlayLayers = shallowRef({});
 const markerSource = new VectorSource();
 const querySource = new VectorSource();
+const drawingSource = new VectorSource();
 const geoJsonFormat = new GeoJSON();
+const activeInteraction = shallowRef(null);
 
 const markerLayer = new VectorLayer({
   source: markerSource,
@@ -63,6 +85,41 @@ const queryLayer = new VectorLayer({
     stroke: new Stroke({ color: '#0f766e', width: 2, lineDash: [8, 8] }),
   }),
 });
+
+const drawingLayer = new VectorLayer({
+  source: drawingSource,
+  style: (feature) => {
+    const label = feature.get('label') ?? '';
+    return new Style({
+      fill: new Fill({ color: 'rgba(30, 64, 175, 0.12)' }),
+      stroke: new Stroke({ color: '#1e40af', width: 3 }),
+      image: new CircleStyle({
+        radius: 6,
+        fill: new Fill({ color: '#1e40af' }),
+        stroke: new Stroke({ color: '#ffffff', width: 2 }),
+      }),
+      text: new Text({
+        text: label,
+        offsetY: -16,
+        font: '12px "Microsoft YaHei", sans-serif',
+        fill: new Fill({ color: '#172033' }),
+        stroke: new Stroke({ color: '#ffffff', width: 3 }),
+      }),
+    });
+  },
+});
+
+const DRAW_TOOL_CONFIG = {
+  drawPoint: { type: 'Point', label: '点要素' },
+  drawLine: { type: 'LineString', label: '线要素' },
+  drawPolygon: { type: 'Polygon', label: '面要素' },
+  drawCircle: { type: 'Circle', label: '圆要素' },
+  drawRectangle: { type: 'Circle', label: '矩形要素', geometryFunction: createBox() },
+  measureLine: { type: 'LineString', label: '距离测量', measure: 'length' },
+  measureArea: { type: 'Polygon', label: '面积测量', measure: 'area' },
+  boxQuery: { type: 'Circle', label: '框选查询', geometryFunction: createBox(), query: 'box' },
+  circleQuery: { type: 'Circle', label: '圆选查询', query: 'circle' },
+};
 
 function setBaseLayer(key) {
   Object.entries(baseLayers.value).forEach(([layerKey, layer]) => {
@@ -101,9 +158,7 @@ async function createOverlayLayers() {
       const source = new VectorSource();
 
       try {
-        const response = await fetch(definition.path);
-        if (!response.ok) throw new Error(`${definition.path} ${response.status}`);
-        const data = await response.json();
+        const data = await safeLoadGeoJson(definition.path);
         source.addFeatures(
           geoJsonFormat.readFeatures(data, {
             dataProjection: 'EPSG:4326',
@@ -135,28 +190,234 @@ function syncOverlayState(state) {
   });
 }
 
+function formatLength(geometry) {
+  const length = getLength(geometry);
+  if (length >= 1000) return `${(length / 1000).toFixed(2)} km`;
+  return `${length.toFixed(1)} m`;
+}
+
+function formatArea(geometry) {
+  const area = getArea(geometry);
+  if (area >= 1000000) return `${(area / 1000000).toFixed(2)} km²`;
+  return `${area.toFixed(1)} m²`;
+}
+
+function queryOverlayFeatures(geometry) {
+  const extent = geometry.getExtent();
+  const ignoredLayers = new Set(['nanningDemoBoundary', 'demoGrid']);
+  const counts = {};
+  let total = 0;
+
+  OVERLAY_LAYER_DEFS.forEach((definition) => {
+    if (ignoredLayers.has(definition.key)) return;
+    const layer = overlayLayers.value[definition.key];
+    if (!layer?.getVisible()) return;
+
+    const count = layer
+      .getSource()
+      .getFeatures()
+      .filter((feature) => feature.getGeometry()?.intersectsExtent(extent)).length;
+
+    if (count > 0) {
+      counts[definition.label] = count;
+      total += count;
+    }
+  });
+
+  const detail = Object.entries(counts)
+    .map(([label, count]) => `${label} ${count}`)
+    .join('，');
+  return {
+    total,
+    detail: detail || '未命中专题要素',
+  };
+}
+
+function clearActiveInteraction() {
+  if (activeInteraction.value && map.value) {
+    map.value.removeInteraction(activeInteraction.value);
+  }
+  activeInteraction.value = null;
+}
+
+function activateTool(toolKey) {
+  if (!map.value) return;
+  clearActiveInteraction();
+
+  if (toolKey === 'edit') {
+    const modify = new Modify({ source: drawingSource });
+    modify.on('modifyend', () => {
+      emit('tool-result', { type: 'edit', message: '已编辑绘制要素。' });
+    });
+    map.value.addInteraction(modify);
+    activeInteraction.value = modify;
+    return;
+  }
+
+  const config = DRAW_TOOL_CONFIG[toolKey];
+  if (!config) return;
+
+  const draw = new Draw({
+    source: drawingSource,
+    type: config.type,
+    geometryFunction: config.geometryFunction,
+  });
+
+  draw.on('drawend', (event) => {
+    const geometry = event.feature.getGeometry();
+    let message = `已添加${config.label}。`;
+    let label = config.label;
+
+    if (config.measure === 'length') {
+      label = formatLength(geometry);
+      message = `距离测量：${label}`;
+    }
+
+    if (config.measure === 'area') {
+      label = formatArea(geometry);
+      message = `面积测量：${label}`;
+    }
+
+    if (config.query) {
+      const result = queryOverlayFeatures(geometry);
+      label = config.label;
+      message = `${config.label}：共命中 ${result.total} 个专题要素，${result.detail}。`;
+    }
+
+    event.feature.setProperties({
+      tool: toolKey,
+      label,
+      createdAt: new Date().toISOString(),
+    });
+    emit('tool-result', { type: toolKey, message });
+  });
+
+  map.value.addInteraction(draw);
+  activeInteraction.value = draw;
+}
+
+function deleteDrawnFeature(pixel) {
+  const feature = map.value?.forEachFeatureAtPixel(pixel, (hit) => hit, {
+    layerFilter: (layer) => layer === drawingLayer,
+  });
+  if (!feature) {
+    emit('tool-result', { type: 'delete', message: '未点中可删除的绘制要素。' });
+    return true;
+  }
+
+  drawingSource.removeFeature(feature);
+  emit('tool-result', { type: 'delete', message: '已删除绘制要素。' });
+  return true;
+}
+
+function clearDrawings() {
+  drawingSource.clear();
+  emit('tool-result', { type: 'clearDrawings', message: '已清空所有绘制和测量要素。' });
+}
+
+function exportMap() {
+  if (!map.value) return;
+  map.value.once('rendercomplete', () => {
+    const mapCanvas = document.createElement('canvas');
+    const size = map.value.getSize();
+    mapCanvas.width = size[0];
+    mapCanvas.height = size[1];
+    const mapContext = mapCanvas.getContext('2d');
+
+    document.querySelectorAll('.ol-layer canvas, canvas.ol-layer').forEach((canvas) => {
+      if (canvas.width <= 0 || canvas.height <= 0) return;
+
+      const opacity = canvas.parentNode?.style?.opacity || canvas.style.opacity;
+      mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
+
+      const transform = canvas.style.transform;
+      const matrix = transform
+        .match(/^matrix\(([^(]*)\)$/)?.[1]
+        ?.split(',')
+        .map(Number);
+
+      if (matrix) {
+        mapContext.setTransform(matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
+      } else {
+        mapContext.setTransform(1, 0, 0, 1, 0, 0);
+      }
+      mapContext.drawImage(canvas, 0, 0);
+    });
+
+    mapContext.setTransform(1, 0, 0, 1, 0, 0);
+    const link = document.createElement('a');
+    link.download = `green-city-map-${Date.now()}.png`;
+    link.href = mapCanvas.toDataURL('image/png');
+    link.click();
+    emit('tool-result', { type: 'exportMap', message: '已导出当前地图 PNG。' });
+  });
+
+  map.value.renderSync();
+}
+
+function handleToolCommand(command) {
+  if (!command?.type) return;
+  if (command.type === 'clearDrawings') clearDrawings();
+  if (command.type === 'exportMap') exportMap();
+}
+
+function showFeaturePopup(feature, pixel) {
+  popupState.value = {
+    visible: true,
+    left: pixel[0] + 14,
+    top: pixel[1] + 14,
+    title: feature.get('name') ?? '未命名要素',
+    category: feature.get('category') ?? '专题要素',
+    description:
+      feature.get('cultureText') ??
+      feature.get('note') ??
+      feature.get('riskType') ??
+      feature.get('serviceType') ??
+      '静态 GeoJSON 演示数据',
+  };
+}
+
+function hidePopup() {
+  popupState.value.visible = false;
+}
+
 function updateMarker(location) {
+  const displayLonLat =
+    props.baseLayerKey === 'amap'
+      ? wgs84ToGcj02(location.lon, location.lat)
+      : [location.lon, location.lat];
+
   markerSource.clear();
   markerSource.addFeature(
     new Feature({
-      geometry: new Point(fromLonLat([location.lon, location.lat])),
+      geometry: new Point(fromLonLat(displayLonLat)),
     }),
   );
   updateQueryCircle(location);
 }
 
 function updateQueryCircle(location) {
+  const displayLonLat =
+    props.baseLayerKey === 'amap'
+      ? wgs84ToGcj02(location.lon, location.lat)
+      : [location.lon, location.lat];
+
   querySource.clear();
   querySource.addFeature(
     new Feature({
-      geometry: new Circle(fromLonLat([location.lon, location.lat]), props.queryRadiusMeters),
+      geometry: new Circle(fromLonLat(displayLonLat), props.queryRadiusMeters),
     }),
   );
 }
 
 function resetView() {
+  const center =
+    props.baseLayerKey === 'amap'
+      ? wgs84ToGcj02(NANNING_CENTER.lon, NANNING_CENTER.lat)
+      : [NANNING_CENTER.lon, NANNING_CENTER.lat];
+
   map.value?.getView().animate({
-    center: fromLonLat([NANNING_CENTER.lon, NANNING_CENTER.lat]),
+    center: fromLonLat(center),
     zoom: 11,
     duration: 300,
   });
@@ -172,6 +433,7 @@ onMounted(async () => {
     layers: [
       ...Object.values(baseLayers.value),
       ...Object.values(overlayLayers.value),
+      drawingLayer,
       queryLayer,
       markerLayer,
     ],
@@ -198,11 +460,19 @@ onMounted(async () => {
   });
 
   map.value.on('click', (event) => {
+    if (props.activeTool === 'delete') {
+      deleteDrawnFeature(event.pixel);
+      return;
+    }
+
+    if (props.activeTool !== 'inspect') return;
+
     const feature = map.value.forEachFeatureAtPixel(event.pixel, (hit) => hit, {
       layerFilter: (layer) => layer !== markerLayer && layer !== queryLayer,
     });
 
     if (feature) {
+      showFeaturePopup(feature, event.pixel);
       emit('feature-selected', {
         name: feature.get('name') ?? '未命名要素',
         category: feature.get('category') ?? '专题要素',
@@ -210,9 +480,16 @@ onMounted(async () => {
         cultureText: feature.get('cultureText') ?? '',
         score: feature.get('score') ?? feature.get('greenScore') ?? feature.get('supportScore') ?? null,
       });
+    } else {
+      hidePopup();
+      emit('feature-selected', null);
     }
 
-    const [lon, lat] = toLonLat(event.coordinate);
+    const [displayLon, displayLat] = toLonLat(event.coordinate);
+    const [lon, lat] =
+      props.baseLayerKey === 'amap'
+        ? gcj02ToWgs84(displayLon, displayLat)
+        : [displayLon, displayLat];
     const location = {
       lon: Number(lon.toFixed(6)),
       lat: Number(lat.toFixed(6)),
@@ -224,6 +501,7 @@ onMounted(async () => {
   setBaseLayer(props.baseLayerKey);
   syncOverlayState(props.overlayState);
   updateMarker(props.selectedLocation);
+  activateTool(props.activeTool);
 });
 
 watch(
@@ -251,7 +529,18 @@ watch(
   () => updateQueryCircle(props.selectedLocation),
 );
 
+watch(
+  () => props.activeTool,
+  (toolKey) => activateTool(toolKey),
+);
+
+watch(
+  () => props.toolCommand?.id,
+  () => handleToolCommand(props.toolCommand),
+);
+
 onBeforeUnmount(() => {
+  clearActiveInteraction();
   map.value?.setTarget(undefined);
 });
 </script>
@@ -260,5 +549,15 @@ onBeforeUnmount(() => {
   <div class="map-wrap">
     <div ref="mapEl" class="map-canvas"></div>
     <button class="reset-button" type="button" @click="resetView">复位南宁</button>
+    <div
+      v-if="popupState.visible"
+      class="feature-popup"
+      :style="{ left: `${popupState.left}px`, top: `${popupState.top}px` }"
+    >
+      <button type="button" aria-label="关闭弹窗" @click="hidePopup">×</button>
+      <strong>{{ popupState.title }}</strong>
+      <span>{{ popupState.category }}</span>
+      <p>{{ popupState.description }}</p>
+    </div>
   </div>
 </template>

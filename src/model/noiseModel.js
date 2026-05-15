@@ -39,6 +39,33 @@ function nightPoiScore(count) {
   return 20;
 }
 
+function distanceRisk(distanceM, near, far, maxRisk) {
+  if (distanceM === undefined) return 0;
+  if (distanceM <= near) return maxRisk;
+  if (distanceM >= far) return 0;
+  return maxRisk * (1 - (distanceM - near) / (far - near));
+}
+
+export function calculateNoiseRisk({
+  majorRoadDistanceM,
+  railwayDistanceM,
+  nightlifePoiCount500m,
+  restaurantPoiCount500m,
+  greenDistanceM,
+}) {
+  let risk = 0;
+  risk += distanceRisk(majorRoadDistanceM, 80, 700, 35);
+  risk += distanceRisk(railwayDistanceM, 120, 1000, 25);
+  risk += Math.min((nightlifePoiCount500m ?? 0) * 8, 30);
+  risk += Math.min((restaurantPoiCount500m ?? 0) * 2, 20);
+
+  if (greenDistanceM !== undefined && greenDistanceM < 300) {
+    risk -= 8;
+  }
+
+  return clamp(risk, 0, 100);
+}
+
 export function estimateNoise(location) {
   const nearestRoadMeters = nearestDistance(location, ROAD_ANCHORS);
   const nearestQuietMeters = nearestDistance(location, QUIET_ANCHORS);
@@ -46,10 +73,11 @@ export function estimateNoise(location) {
     return sum + (distanceMeters(location, anchor) <= 1200 ? 5 : 0);
   }, 0);
 
-  const roadRisk = clamp(55 - nearestRoadMeters / 18, 0, 48);
-  const nightRisk = clamp(nightPoiCount * 3.2, 0, 35);
-  const quietBonus = nearestQuietMeters <= 800 ? 18 : nearestQuietMeters <= 1800 ? 8 : 0;
-  const noiseRisk = Math.round(clamp(22 + roadRisk + nightRisk - quietBonus, 5, 86));
+  const noiseRisk = calculateNoiseRisk({
+    majorRoadDistanceM: nearestRoadMeters,
+    nightlifePoiCount500m: nightPoiCount,
+    greenDistanceM: nearestQuietMeters,
+  });
 
   return {
     noiseRisk,
@@ -58,6 +86,6 @@ export function estimateNoise(location) {
     nightPoiDensity: nightPoiScore(nightPoiCount),
     nearestRoadMeters: Math.round(nearestRoadMeters),
     nightPoiCount,
-    quietBonus,
+    quietBonus: nearestQuietMeters < 300 ? 8 : 0,
   };
 }

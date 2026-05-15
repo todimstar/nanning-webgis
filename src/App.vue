@@ -3,8 +3,9 @@ import { computed, onMounted, ref } from 'vue';
 import MapView from './components/MapView.vue';
 import ProfileSelector from './components/ProfileSelector.vue';
 import LayerPanel from './components/LayerPanel.vue';
+import ToolPanel from './components/ToolPanel.vue';
 import AnalysisPanel from './components/AnalysisPanel.vue';
-import { fetchEnvironment, getFallbackEnvironment } from './api/openMeteo.js';
+import { fetchEnvironment } from './api/openMeteo.js';
 import { DEFAULT_SCORE_CONFIG, computeAssessment } from './model/scoreModel.js';
 import { buildExplanation } from './model/explainModel.js';
 import {
@@ -14,7 +15,7 @@ import {
 } from './data/greenCityData.js';
 
 const scoreConfig = ref(DEFAULT_SCORE_CONFIG);
-const selectedProfile = ref('general');
+const selectedProfile = ref('green');
 const selectedLocation = ref(NANNING_CENTER);
 const environment = ref(null);
 const greenCityData = ref({});
@@ -24,6 +25,9 @@ const apiError = ref('');
 const baseLayerKey = ref('osm');
 const overlayState = ref(createDefaultOverlayState());
 const queryRadiusMeters = ref(900);
+const activeTool = ref('inspect');
+const toolCommand = ref({ id: 0, type: '' });
+const toolResult = ref(null);
 
 const assessment = computed(() => {
   if (!environment.value) return null;
@@ -57,18 +61,34 @@ async function loadScoreConfig() {
   }
 }
 
+function runToolCommand(type) {
+  toolCommand.value = {
+    id: Date.now(),
+    type,
+  };
+}
+
 async function evaluateLocation(location) {
   selectedLocation.value = location;
-  selectedFeature.value = null;
   loading.value = true;
   apiError.value = '';
 
   try {
     environment.value = await fetchEnvironment(location);
+    if (environment.value.unavailable) {
+      apiError.value = '实时环境数据暂不可用';
+    }
   } catch (error) {
-    console.warn('Open-Meteo 请求失败，使用示例环境数据降级：', error);
-    apiError.value = 'Open-Meteo 暂时不可用，当前显示的是本地示例环境数据。';
-    environment.value = getFallbackEnvironment(location);
+    console.warn('Open-Meteo 请求失败：', error);
+    apiError.value = '实时环境数据暂不可用';
+    environment.value = {
+      coordinates: { lat: location.lat, lon: location.lon },
+      fetchedAt: new Date().toISOString(),
+      source: 'Open-Meteo',
+      unavailable: true,
+      errorMessage: error instanceof Error ? error.message : 'unknown error',
+      hourly: [],
+    };
   } finally {
     loading.value = false;
   }
@@ -108,6 +128,12 @@ onMounted(async () => {
         v-model:query-radius-meters="queryRadiusMeters"
       />
 
+      <ToolPanel
+        v-model:active-tool="activeTool"
+        :tool-result="toolResult"
+        @command="runToolCommand"
+      />
+
       <section class="panel-block">
         <h2>初版能力</h2>
         <ul class="scope-list">
@@ -125,8 +151,11 @@ onMounted(async () => {
         :overlay-state="overlayState"
         :selected-location="selectedLocation"
         :query-radius-meters="queryRadiusMeters"
+        :active-tool="activeTool"
+        :tool-command="toolCommand"
         @location-selected="evaluateLocation"
         @feature-selected="selectedFeature = $event"
+        @tool-result="toolResult = $event"
       />
     </main>
 
@@ -138,6 +167,7 @@ onMounted(async () => {
         :explanation="explanation"
         :selected-feature="selectedFeature"
         :query-radius-meters="queryRadiusMeters"
+        :tool-result="toolResult"
         :loading="loading"
         :api-error="apiError"
       />

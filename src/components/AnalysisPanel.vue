@@ -26,6 +26,10 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  toolResult: {
+    type: Object,
+    default: null,
+  },
   loading: {
     type: Boolean,
     default: false,
@@ -46,12 +50,12 @@ const trendSamples = computed(() => {
   return hourly.slice(0, 12).map((item) => ({
     label: item.time ? new Date(item.time).getHours().toString().padStart(2, '0') : '--',
     temperature: item.temperature ?? 0,
-    aqi: item.aqi ?? 0,
+    pm25: item.pm25 ?? 0,
   }));
 });
 
 const trendMax = computed(() => {
-  const values = trendSamples.value.flatMap((item) => [item.temperature, item.aqi]);
+  const values = trendSamples.value.flatMap((item) => [item.temperature, item.pm25]);
   return Math.max(1, ...values);
 });
 </script>
@@ -63,7 +67,7 @@ const trendMax = computed(() => {
         <p class="eyebrow">当前评估点</p>
         <h2>{{ location.lon.toFixed(5) }}, {{ location.lat.toFixed(5) }}</h2>
       </div>
-      <span class="source-pill">{{ environment?.source || '等待数据' }}</span>
+      <span class="source-pill">{{ environment?.unavailable ? '实时暂不可用' : environment?.source || '等待数据' }}</span>
     </div>
 
     <div v-if="apiError" class="notice">{{ apiError }}</div>
@@ -81,39 +85,39 @@ const trendMax = computed(() => {
       <div class="metric-grid">
         <article>
           <span>温度</span>
-          <strong>{{ valueOrDash(environment.weather.temperature, '°C') }}</strong>
+          <strong>{{ valueOrDash(environment.weather?.temperature2m, '°C') }}</strong>
         </article>
         <article>
           <span>湿度</span>
-          <strong>{{ valueOrDash(environment.weather.humidity, '%') }}</strong>
+          <strong>{{ valueOrDash(environment.weather?.relativeHumidity2m, '%') }}</strong>
         </article>
         <article>
           <span>风速</span>
-          <strong>{{ valueOrDash(environment.weather.windSpeed, ' km/h') }}</strong>
+          <strong>{{ valueOrDash(environment.weather?.windSpeed10m, ' km/h') }}</strong>
         </article>
         <article>
           <span>PM2.5</span>
-          <strong>{{ valueOrDash(environment.air.pm25, ' μg/m³') }}</strong>
+          <strong>{{ valueOrDash(environment.air?.pm25, ' μg/m³') }}</strong>
         </article>
         <article>
           <span>PM10</span>
-          <strong>{{ valueOrDash(environment.air.pm10, ' μg/m³') }}</strong>
+          <strong>{{ valueOrDash(environment.air?.pm10, ' μg/m³') }}</strong>
         </article>
         <article>
           <span>AQI</span>
-          <strong>{{ valueOrDash(environment.air.aqi) }}</strong>
+          <strong>{{ valueOrDash(environment.air?.aqi) }}</strong>
         </article>
         <article>
           <span>NO2</span>
-          <strong>{{ valueOrDash(environment.air.no2, ' μg/m³') }}</strong>
+          <strong>{{ valueOrDash(environment.air?.nitrogenDioxide, ' μg/m³') }}</strong>
         </article>
         <article>
           <span>O3</span>
-          <strong>{{ valueOrDash(environment.air.ozone, ' μg/m³') }}</strong>
+          <strong>{{ valueOrDash(environment.air?.ozone, ' μg/m³') }}</strong>
         </article>
         <article>
           <span>UV</span>
-          <strong>{{ valueOrDash(environment.air.uvIndex) }}</strong>
+          <strong>{{ valueOrDash(environment.air?.uvIndex) }}</strong>
         </article>
         <article>
           <span>噪音风险</span>
@@ -154,6 +158,11 @@ const trendMax = computed(() => {
         <p v-if="selectedFeature.score !== null">示例评分：{{ selectedFeature.score }}</p>
       </section>
 
+      <section v-if="toolResult" class="data-block tool-result-block">
+        <h2>工具结果</h2>
+        <p>{{ toolResult.message }}</p>
+      </section>
+
       <section class="data-block">
         <h2>指标评分</h2>
         <div class="bars">
@@ -186,15 +195,15 @@ const trendMax = computed(() => {
             ></span>
             <span
               class="trend-bar aqi"
-              :style="{ height: `${Math.max(12, (point.aqi / trendMax) * 88)}px` }"
-              :title="`${point.label}:00 AQI ${point.aqi}`"
+              :style="{ height: `${Math.max(12, (point.pm25 / trendMax) * 88)}px` }"
+              :title="`${point.label}:00 PM2.5 ${point.pm25}`"
             ></span>
             <small>{{ point.label }}</small>
           </div>
         </div>
         <div class="trend-legend">
           <span><i class="legend-temp"></i>温度</span>
-          <span><i class="legend-aqi"></i>AQI</span>
+          <span><i class="legend-aqi"></i>PM2.5</span>
         </div>
       </section>
 

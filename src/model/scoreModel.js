@@ -7,13 +7,12 @@ export const DEFAULT_SCORE_CONFIG = {
       label: '呼吸道敏感',
       description: '更关注空气质量、绿地与医疗便利。',
       weights: {
-        airQuality: 0.45,
-        humidityComfort: 0.15,
+        airQuality: 0.5,
+        humidityComfort: 0.1,
         noiseComfort: 0.1,
         greenSpace: 0.15,
-        cultureAccess: 0.08,
         medical: 0.1,
-        lifeConvenience: 0.02,
+        cultureAccess: 0.05,
       },
     },
     skin: {
@@ -26,41 +25,36 @@ export const DEFAULT_SCORE_CONFIG = {
         medical: 0.1,
         noiseComfort: 0.05,
         greenSpace: 0.05,
-        cultureAccess: 0.05,
       },
     },
     sleep: {
-      label: '睡眠浅怕吵',
+      label: '睡眠浅',
       description: '更关注噪音风险、主干道距离和夜间 POI 密度。',
       weights: {
-        noiseComfort: 0.45,
-        roadDistance: 0.2,
-        nightPoiDensity: 0.15,
+        noiseComfort: 0.55,
         airQuality: 0.1,
-        greenSpace: 0.05,
-        cultureAccess: 0.05,
-        medical: 0.05,
+        humidityComfort: 0.1,
+        greenSpace: 0.15,
+        medical: 0.1,
       },
     },
-    general: {
-      label: '普通宜居',
-      description: '综合考虑空气、湿度、噪音、医疗、绿地和生活便利。',
+    green: {
+      label: '综合绿城生活',
+      description: '综合考虑绿地、水系、空气、湿度、噪音、医疗与生态文化体验。',
       weights: {
-        airQuality: 0.25,
-        humidityComfort: 0.2,
-        noiseComfort: 0.2,
-        greenSpace: 0.15,
-        cultureAccess: 0.1,
-        medical: 0.1,
-        lifeConvenience: 0.0,
+        greenSpace: 0.3,
+        cultureAccess: 0.15,
+        airQuality: 0.2,
+        humidityComfort: 0.15,
+        noiseComfort: 0.15,
+        uvSafety: 0.05,
       },
     },
   },
   thresholds: {
-    excellent: 85,
-    good: 70,
-    normal: 55,
-    caution: 40,
+    excellent: 82,
+    good: 68,
+    normal: 50,
   },
 };
 
@@ -78,37 +72,45 @@ const METRIC_LABELS = {
 };
 
 function scoreAirQuality(air) {
-  if (air.pm25 !== null && air.pm25 !== undefined) {
-    if (air.pm25 <= 15) return 95;
-    if (air.pm25 <= 35) return 82;
-    if (air.pm25 <= 55) return 62;
-    return 38;
-  }
-  if (air.aqi !== null && air.aqi !== undefined) return clamp(110 - air.aqi * 0.8, 0, 100);
-  return 65;
+  const pm25 = air?.pm25;
+  const pm10 = air?.pm10;
+  const aqi = air?.aqi;
+  if (aqi !== null && aqi !== undefined) return clamp(100 - aqi, 0, 100);
+  const pm25Score = pm25 === null || pm25 === undefined ? 70 : 100 - pm25 * 2.2;
+  const pm10Score = pm10 === null || pm10 === undefined ? 70 : 100 - pm10 * 1.1;
+  return clamp((pm25Score + pm10Score) / 2, 0, 100);
 }
 
 function scoreHumidity(humidity) {
   if (humidity === null || humidity === undefined) return 65;
-  if (humidity >= 40 && humidity <= 60) return 100;
-  if ((humidity >= 30 && humidity < 40) || (humidity > 60 && humidity <= 70)) return 80;
-  if ((humidity >= 20 && humidity < 30) || (humidity > 70 && humidity <= 80)) return 60;
-  return 40;
+  return clamp(100 - Math.abs(humidity - 55) * 2.2, 0, 100);
 }
 
 function scoreUv(uv) {
-  if (uv === null || uv === undefined) return 75;
-  if (uv <= 2) return 100;
-  if (uv <= 5) return 80;
-  if (uv <= 7) return 60;
-  if (uv <= 10) return 40;
-  return 20;
+  if (uv === null || uv === undefined) return 70;
+  return clamp(100 - uv * 10, 0, 100);
 }
 
 function pointFromFeature(feature) {
-  const coordinates = feature?.geometry?.coordinates;
-  if (!Array.isArray(coordinates) || typeof coordinates[0] !== 'number') return null;
-  return { lon: coordinates[0], lat: coordinates[1] };
+  const geometry = feature?.geometry;
+  const coordinates = geometry?.coordinates;
+  if (!Array.isArray(coordinates)) return null;
+
+  if (geometry.type === 'Point' && typeof coordinates[0] === 'number') {
+    return { lon: coordinates[0], lat: coordinates[1] };
+  }
+
+  if (geometry.type === 'Polygon' && Array.isArray(coordinates[0])) {
+    const ring = coordinates[0].filter((point) => Array.isArray(point) && point.length >= 2);
+    if (!ring.length) return null;
+    const totals = ring.reduce(
+      (sum, point) => ({ lon: sum.lon + point[0], lat: sum.lat + point[1] }),
+      { lon: 0, lat: 0 },
+    );
+    return { lon: totals.lon / ring.length, lat: totals.lat / ring.length };
+  }
+
+  return null;
 }
 
 function featuresFor(collection) {
@@ -171,11 +173,10 @@ function locationConvenience(location) {
 }
 
 function levelFor(score, thresholds) {
-  if (score >= thresholds.excellent) return '非常推荐';
-  if (score >= thresholds.good) return '推荐';
+  if (score >= thresholds.excellent) return '推荐';
+  if (score >= thresholds.good) return '较适合';
   if (score >= thresholds.normal) return '一般';
-  if (score >= thresholds.caution) return '谨慎';
-  return '不推荐';
+  return '谨慎';
 }
 
 export function computeAssessment({
@@ -186,15 +187,15 @@ export function computeAssessment({
   greenCityData = {},
   radiusMeters = 900,
 }) {
-  const profile = config.profiles[profileKey] ?? config.profiles.general;
+  const profile = config.profiles[profileKey] ?? config.profiles.green;
   const noise = estimateNoise(location);
   const convenience = locationConvenience(location);
   const layerScores = layerDerivedScores(location, greenCityData, radiusMeters);
 
   const metrics = {
     airQuality: Math.round(scoreAirQuality(environment.air)),
-    humidityComfort: scoreHumidity(environment.weather.humidity),
-    uvSafety: scoreUv(environment.air.uvIndex),
+    humidityComfort: scoreHumidity(environment.weather?.relativeHumidity2m),
+    uvSafety: scoreUv(environment.air?.uvIndex),
     noiseComfort: noise.noiseComfort,
     greenSpace: layerScores.greenSpace ?? Math.round(convenience.greenSpace),
     medical: layerScores.medical ?? Math.round(convenience.medical),

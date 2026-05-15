@@ -20,13 +20,16 @@ export function buildExplanation({ assessment, profile, environment }) {
   addStrength(strengths, metrics.cultureAccess >= 70, '周边具有可用于日常休闲和绿城文化表达的生态文化点');
 
   addRisk(risks, metrics.airQuality < 60, '空气质量分偏低，呼吸道敏感人群需要谨慎');
-  addRisk(risks, environment.weather.humidity > 70, '当前湿度偏高，夏季可能有闷热潮湿感');
+  addRisk(risks, environment.weather?.relativeHumidity2m > 70, '当前湿度偏高，夏季可能有闷热潮湿感');
   addRisk(risks, metrics.uvSafety < 70, '紫外线风险偏高，户外活动需要防晒');
   addRisk(risks, metrics.noiseComfort < 60, `距示例主干道约 ${noise.nearestRoadMeters} 米，夜间可能存在交通或商圈噪音`);
   addRisk(risks, metrics.nightPoiDensity < 70, '附近夜间活跃 POI 密度较高，睡眠浅用户需要避开临街楼栋');
   addRisk(risks, metrics.cultureAccess < 60, '周边生态文化点较少，绿城生活体验需要依赖更远距离的公园或水系空间');
 
-  const summary = `该位置对“${profile.label}”用户的适宜度为 ${score} 分，属于${level}区域。`;
+  const realtimeText = environment.unavailable
+    ? '实时环境数据暂不可用，本次评分主要基于静态空间数据。'
+    : `实时环境参考：气温 ${environment.weather?.temperature2m ?? '--'}℃，相对湿度 ${environment.weather?.relativeHumidity2m ?? '--'}%，PM2.5 ${environment.air?.pm25 ?? '--'}，UV ${environment.air?.uvIndex ?? '--'}。`;
+  const summary = `该位置对“${profile.label}”模式的绿城友好度为 ${score} 分，属于${level}区域。${realtimeText}`;
   const advice =
     score >= 70
       ? '适合作为绿城生活体验候选区域，建议结合步行到绿地、水系和医疗点的实际路线继续筛选。'

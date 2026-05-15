@@ -2,6 +2,22 @@ export const NANNING_CENTER = { lon: 108.3669, lat: 22.817 };
 
 export const OVERLAY_LAYER_DEFS = [
   {
+    key: 'nanningDemoBoundary',
+    label: '南宁演示范围',
+    path: './data/nanning_demo_boundary.geojson',
+    color: '#475569',
+    fill: 'rgba(71, 85, 105, 0.08)',
+    defaultVisible: true,
+  },
+  {
+    key: 'demoGrid',
+    label: '评估网格',
+    path: './data/demo_grid.geojson',
+    color: '#0f766e',
+    fill: 'rgba(15, 118, 110, 0.12)',
+    defaultVisible: true,
+  },
+  {
     key: 'greenSpaces',
     label: '绿地与水系',
     path: './data/green_spaces.geojson',
@@ -33,14 +49,6 @@ export const OVERLAY_LAYER_DEFS = [
     fill: 'rgba(220, 38, 38, 0.16)',
     defaultVisible: true,
   },
-  {
-    key: 'demoGrid',
-    label: '评估网格',
-    path: './data/demo_grid.geojson',
-    color: '#0f766e',
-    fill: 'rgba(15, 118, 110, 0.12)',
-    defaultVisible: true,
-  },
 ];
 
 export function createDefaultOverlayState() {
@@ -49,18 +57,30 @@ export function createDefaultOverlayState() {
       layer.key,
       {
         visible: layer.defaultVisible,
-        opacity: layer.key === 'demoGrid' ? 0.45 : 0.9,
+        opacity: ['demoGrid', 'nanningDemoBoundary'].includes(layer.key) ? 0.45 : 0.9,
       },
     ]),
   );
 }
 
+export async function safeLoadGeoJson(path) {
+  try {
+    const response = await fetch(path);
+    if (!response.ok) throw new Error(`${path} ${response.status}`);
+    return response.json();
+  } catch (error) {
+    console.warn(`静态 GeoJSON 加载失败：${path}`, error);
+    return {
+      type: 'FeatureCollection',
+      features: [],
+    };
+  }
+}
+
 export async function loadGreenCityCollections() {
   const entries = await Promise.all(
     OVERLAY_LAYER_DEFS.map(async (layer) => {
-      const response = await fetch(layer.path);
-      if (!response.ok) throw new Error(`${layer.path} ${response.status}`);
-      return [layer.key, await response.json()];
+      return [layer.key, await safeLoadGeoJson(layer.path)];
     }),
   );
 

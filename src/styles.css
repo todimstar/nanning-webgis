@@ -216,6 +216,56 @@ h2 {
   font-variant-numeric: tabular-nums;
 }
 
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.tool-grid button,
+.tool-actions button {
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid #d8e4f4;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #26362f;
+  cursor: pointer;
+}
+
+.tool-grid button.active {
+  border-color: var(--color-secondary);
+  background: #e7f5ef;
+  color: #075846;
+  font-weight: 700;
+}
+
+.tool-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.tool-actions button {
+  border-color: #bbd7ff;
+  background: #eff6ff;
+  color: #17326d;
+}
+
+.tool-hint,
+.tool-result {
+  margin: 10px 0 0;
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.tool-result {
+  color: #075846;
+  font-weight: 700;
+}
+
 .scope-list {
   display: grid;
   gap: 8px;
@@ -265,6 +315,51 @@ h2 {
   background: rgba(255, 255, 255, 0.9);
   color: #22352d;
   font-size: 12px;
+}
+
+.feature-popup {
+  position: absolute;
+  z-index: 4;
+  width: min(260px, calc(100% - 32px));
+  padding: 12px 14px;
+  border: 1px solid #cfe0f5;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: var(--shadow-panel);
+  color: #172033;
+  pointer-events: auto;
+}
+
+.feature-popup button {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 999px;
+  background: #eef4fb;
+  color: #41534b;
+  cursor: pointer;
+}
+
+.feature-popup strong,
+.feature-popup span {
+  display: block;
+  padding-right: 22px;
+}
+
+.feature-popup span {
+  margin-top: 4px;
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+.feature-popup p {
+  margin: 8px 0 0;
+  color: #35463f;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .right-panel {
@@ -534,6 +629,11 @@ h2 {
 .feature-block {
   border-color: #bbf7d0;
   background: #f5fff7;
+}
+
+.tool-result-block {
+  border-color: #bfdbfe;
+  background: #f8fbff;
 }
 
 @media (max-width: 1100px) {

@@ -1,0 +1,40 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "南宁核心区演示范围",
+        "source": "project generated bbox",
+        "note": "该范围仅用于课程演示，不等于南宁市行政边界"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              108.15,
+              22.65
+            ],
+            [
+              108.55,
+              22.65
+            ],
+            [
+              108.55,
+              22.95
+            ],
+            [
+              108.15,
+              22.95
+            ],
+            [
+              108.15,
+              22.65
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

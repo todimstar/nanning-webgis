@@ -1,32 +1,16 @@
+import { getCache, roundedCoordKey, setCache } from '../data/cache.js';
+
+const WEATHER_BASE = 'https://api.open-meteo.com/v1/forecast';
+const AIR_BASE = 'https://air-quality-api.open-meteo.com/v1/air-quality';
 const TIMEZONE = 'Asia/Shanghai';
 
-const WEATHER_CURRENT = [
-  'temperature_2m',
-  'relative_humidity_2m',
-  'wind_speed_10m',
-];
-
-const AIR_CURRENT = [
-  'pm2_5',
-  'pm10',
-  'nitrogen_dioxide',
-  'ozone',
-  'sulphur_dioxide',
-  'carbon_monoxide',
-  'uv_index',
-  'us_aqi',
-];
-
-function buildUrl(baseUrl, params) {
-  const query = new URLSearchParams(params);
-  return `${baseUrl}?${query.toString()}`;
+function num(value) {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null;
 }
 
-async function fetchJson(url) {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`${response.status} ${response.statusText}`);
-  }
+async function fetchJson(url, signal) {
+  const response = await fetch(url, { signal });
+  if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
   return response.json();
 }
 
@@ -34,92 +18,108 @@ function first24(hourly, key) {
   return Array.isArray(hourly?.[key]) ? hourly[key].slice(0, 24) : [];
 }
 
-function mergeHourly(weather, airQuality) {
-  const times = first24(weather.hourly, 'time');
+function mergeHourly(weatherData, airData) {
+  const times = first24(weatherData.hourly, 'time');
   return times.map((time, index) => ({
     time,
-    temperature: first24(weather.hourly, 'temperature_2m')[index] ?? null,
-    humidity: first24(weather.hourly, 'relative_humidity_2m')[index] ?? null,
-    windSpeed: first24(weather.hourly, 'wind_speed_10m')[index] ?? null,
-    aqi: first24(airQuality.hourly, 'us_aqi')[index] ?? null,
-    pm25: first24(airQuality.hourly, 'pm2_5')[index] ?? null,
+    temperature: first24(weatherData.hourly, 'temperature_2m')[index] ?? null,
+    humidity: first24(weatherData.hourly, 'relative_humidity_2m')[index] ?? null,
+    precipitationProbability: first24(weatherData.hourly, 'precipitation_probability')[index] ?? null,
+    windSpeed: first24(weatherData.hourly, 'wind_speed_10m')[index] ?? null,
+    pm10: first24(airData.hourly, 'pm10')[index] ?? null,
+    pm25: first24(airData.hourly, 'pm2_5')[index] ?? null,
+    uvIndex: first24(airData.hourly, 'uv_index')[index] ?? null,
   }));
 }
 
-export async function fetchEnvironment({ lon, lat }) {
-  const weatherUrl = buildUrl('https://api.open-meteo.com/v1/forecast', {
-    latitude: lat.toFixed(5),
-    longitude: lon.toFixed(5),
-    current: WEATHER_CURRENT.join(','),
-    hourly: WEATHER_CURRENT.join(','),
-    timezone: TIMEZONE,
-  });
-
-  const airUrl = buildUrl('https://air-quality-api.open-meteo.com/v1/air-quality', {
-    latitude: lat.toFixed(5),
-    longitude: lon.toFixed(5),
-    current: AIR_CURRENT.join(','),
-    hourly: AIR_CURRENT.join(','),
-    timezone: TIMEZONE,
-  });
-
-  const [weather, airQuality] = await Promise.all([
-    fetchJson(weatherUrl),
-    fetchJson(airUrl),
-  ]);
-
-  return {
-    weather: {
-      temperature: weather.current?.temperature_2m ?? null,
-      humidity: weather.current?.relative_humidity_2m ?? null,
-      windSpeed: weather.current?.wind_speed_10m ?? null,
-    },
-    air: {
-      pm25: airQuality.current?.pm2_5 ?? null,
-      pm10: airQuality.current?.pm10 ?? null,
-      no2: airQuality.current?.nitrogen_dioxide ?? null,
-      ozone: airQuality.current?.ozone ?? null,
-      so2: airQuality.current?.sulphur_dioxide ?? null,
-      co: airQuality.current?.carbon_monoxide ?? null,
-      uvIndex: airQuality.current?.uv_index ?? null,
-      aqi: airQuality.current?.us_aqi ?? null,
-    },
-    hourly: mergeHourly(weather, airQuality),
-    source: 'Open-Meteo',
-  };
+function buildWeatherUrl(lat, lon) {
+  const url = new URL(WEATHER_BASE);
+  url.searchParams.set('latitude', String(lat));
+  url.searchParams.set('longitude', String(lon));
+  url.searchParams.set(
+    'current',
+    [
+      'temperature_2m',
+      'relative_humidity_2m',
+      'precipitation',
+      'weather_code',
+      'wind_speed_10m',
+    ].join(','),
+  );
+  url.searchParams.set(
+    'hourly',
+    [
+      'temperature_2m',
+      'relative_humidity_2m',
+      'precipitation_probability',
+      'wind_speed_10m',
+    ].join(','),
+  );
+  url.searchParams.set('timezone', TIMEZONE);
+  return url.toString();
 }
 
-export function getFallbackEnvironment() {
-  const now = new Date();
-  const hourly = Array.from({ length: 24 }, (_, index) => {
-    const time = new Date(now.getTime() + index * 60 * 60 * 1000);
-    return {
-      time: time.toISOString(),
-      temperature: 27 + Math.round(Math.sin(index / 4) * 2),
-      humidity: 68 + Math.round(Math.cos(index / 5) * 6),
-      windSpeed: 8,
-      aqi: 42 + (index % 5),
-      pm25: 18 + (index % 4),
-    };
-  });
+function buildAirUrl(lat, lon) {
+  const url = new URL(AIR_BASE);
+  url.searchParams.set('latitude', String(lat));
+  url.searchParams.set('longitude', String(lon));
+  url.searchParams.set(
+    'current',
+    ['european_aqi', 'pm10', 'pm2_5', 'nitrogen_dioxide', 'ozone', 'uv_index'].join(','),
+  );
+  url.searchParams.set('hourly', ['pm10', 'pm2_5', 'uv_index'].join(','));
+  url.searchParams.set('timezone', TIMEZONE);
+  return url.toString();
+}
 
-  return {
-    weather: {
-      temperature: 28,
-      humidity: 70,
-      windSpeed: 8,
-    },
-    air: {
-      pm25: 19,
-      pm10: 35,
-      no2: 18,
-      ozone: 72,
-      so2: 6,
-      co: 420,
-      uvIndex: 4.2,
-      aqi: 45,
-    },
-    hourly,
-    source: '本地示例数据',
-  };
+export async function fetchEnvironmentSnapshot(lat, lon, signal) {
+  const key = `open-meteo:${roundedCoordKey(lat, lon, 2)}`;
+  const cached = getCache(key);
+  if (cached) return cached;
+
+  try {
+    const [weatherData, airData] = await Promise.all([
+      fetchJson(buildWeatherUrl(lat, lon), signal),
+      fetchJson(buildAirUrl(lat, lon), signal),
+    ]);
+
+    const snapshot = {
+      coordinates: { lat, lon },
+      fetchedAt: new Date().toISOString(),
+      source: 'Open-Meteo',
+      weather: {
+        temperature2m: num(weatherData?.current?.temperature_2m),
+        relativeHumidity2m: num(weatherData?.current?.relative_humidity_2m),
+        precipitation: num(weatherData?.current?.precipitation),
+        weatherCode: num(weatherData?.current?.weather_code),
+        windSpeed10m: num(weatherData?.current?.wind_speed_10m),
+      },
+      air: {
+        aqi: num(airData?.current?.european_aqi),
+        pm10: num(airData?.current?.pm10),
+        pm25: num(airData?.current?.pm2_5),
+        nitrogenDioxide: num(airData?.current?.nitrogen_dioxide),
+        ozone: num(airData?.current?.ozone),
+        uvIndex: num(airData?.current?.uv_index),
+      },
+      hourly: mergeHourly(weatherData, airData),
+      unavailable: false,
+    };
+
+    setCache(key, snapshot, 10 * 60 * 1000);
+    return snapshot;
+  } catch (error) {
+    return {
+      coordinates: { lat, lon },
+      fetchedAt: new Date().toISOString(),
+      source: 'Open-Meteo',
+      unavailable: true,
+      errorMessage: error instanceof Error ? error.message : 'unknown error',
+      hourly: [],
+    };
+  }
+}
+
+export function fetchEnvironment({ lon, lat }, signal) {
+  return fetchEnvironmentSnapshot(lat, lon, signal);
 }
