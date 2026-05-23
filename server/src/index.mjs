@@ -98,29 +98,6 @@ async function handleAmapRegeocode(url, response) {
   }
 }
 
-function normalizeAiExplanation(text, fallback) {
-  const match = text.match(/\{[\s\S]*\}/);
-  if (match) {
-    const parsed = JSON.parse(match[0]);
-    return {
-      provider: 'ai',
-      summary: String(parsed.summary || fallback.summary),
-      strengths: String(parsed.strengths || fallback.strengths),
-      risks: String(parsed.risks || fallback.risks),
-      advice: String(parsed.advice || fallback.advice),
-    };
-  }
-
-  const cleanText = String(text || '').trim();
-  return {
-    provider: 'ai',
-    summary: cleanText || fallback.summary,
-    strengths: fallback.strengths,
-    risks: fallback.risks,
-    advice: fallback.advice,
-  };
-}
-
 function buildAiChatCompletionsUrl() {
   const baseUrl = config.ai.baseUrl.replace(/\/$/, '');
   if (baseUrl.endsWith('/chat/completions')) return baseUrl;
@@ -128,8 +105,93 @@ function buildAiChatCompletionsUrl() {
   return `${baseUrl}/v1/chat/completions`;
 }
 
-async function callAiExplanation(payload, fallback) {
-  if (!config.ai.key) return fallback;
+function buildMapContextSummary(payload) {
+  const location = payload.location ?? {};
+  const profile = payload.profile ?? {};
+  const environment = payload.environment ?? {};
+  const assessment = payload.assessment ?? {};
+  const locationContext = payload.locationContext ?? {};
+  const mapState = payload.mapState ?? {};
+  const visibleLayerInfo = Array.isArray(mapState.visibleLayers) ? mapState.visibleLayers : [];
+  const activeHeatmapInfo = Array.isArray(mapState.activeHeatmaps) ? mapState.activeHeatmaps : [];
+  const visibleLayers = Object.entries(mapState.overlayState ?? {})
+    .filter(([, state]) => state?.visible)
+    .map(([key, state]) => {
+      const layer = visibleLayerInfo.find((item) => item?.key === key) ?? {};
+      const label = layer.label || key;
+      return `${label}${state?.opacity != null ? `(${Math.round(Number(state.opacity) * 100)}%)` : ''}`;
+    });
+  const visibleHeatmaps = Object.entries(mapState.heatmapState ?? {})
+    .filter(([, state]) => state?.visible)
+    .map(([key]) => {
+      const heatmap = activeHeatmapInfo.find((item) => item?.key === key) ?? {};
+      return heatmap.label || key;
+    });
+  const nearby = assessment.nearby ?? {};
+
+  return [
+    `位置：${locationContext.formattedAddress || `${location.lon ?? '--'}, ${location.lat ?? '--'}`}`,
+    `画像：${profile.label || profile.key || '未指定'}`,
+    `底图：${mapState.baseLayerLabel || mapState.baseLayerKey || 'amap'}；半径：${mapState.queryRadiusMeters ?? '--'}m`,
+    `可见专题图层：${visibleLayers.length ? visibleLayers.join('、') : '无'}`,
+    `可见热力：${visibleHeatmaps.length ? visibleHeatmaps.join('、') : '无'}`,
+    `天气：温度 ${environment.weather?.temperature2m ?? '--'}℃，湿度 ${environment.weather?.relativeHumidity2m ?? '--'}%，风速 ${environment.weather?.windSpeed10m ?? '--'} km/h，降水 ${environment.weather?.precipitation ?? '--'}mm`,
+    `空气：PM2.5 ${environment.air?.pm25 ?? '--'}，PM10 ${environment.air?.pm10 ?? '--'}，AQI ${environment.air?.aqi ?? '--'}，UV ${environment.air?.uvIndex ?? '--'}`,
+    `评分：${assessment.score ?? '--'} 分，${assessment.level ?? '--'}；空气 ${assessment.metrics?.airQuality ?? '--'}，湿度 ${assessment.metrics?.humidityComfort ?? '--'}，噪音 ${assessment.metrics?.noiseComfort ?? '--'}，绿地 ${assessment.metrics?.greenSpace ?? '--'}，医疗 ${assessment.metrics?.medical ?? '--'}，生态文化 ${assessment.metrics?.cultureAccess ?? '--'}`,
+    `周边：绿地 ${nearby.greenStats?.count ?? 0}，医疗 ${nearby.medicalStats?.count ?? 0}，文化点 ${nearby.cultureStats?.count ?? 0}，噪音点 ${nearby.noiseStats?.count ?? 0}`,
+    payload.selectedFeature?.name ? `点选要素：${payload.selectedFeature.name} · ${payload.selectedFeature.category || '专题要素'}${payload.selectedFeature.detail ? ` · ${payload.selectedFeature.detail}` : ''}` : '',
+    payload.toolResult?.message ? `工具结果：${payload.toolResult.message}` : '',
+  ]
+    .filter(Boolean)
+    .join('\n');
+}
+
+function sanitizeConversation(messages) {
+  return Array.isArray(messages)
+    ? messages
+        .filter((message) => message && (message.role === 'user' || message.role === 'assistant'))
+        .map((message) => ({
+          role: message.role,
+          content: String(message.content ?? '').trim(),
+        }))
+        .filter((message) => message.content.length > 0)
+    : [];
+}
+
+function buildAiMessages(payload) {
+  const initialPrompt = String(payload.prompt ?? '').trim();
+  const systemPrompt = [
+    '你是“绿城知境 WebGIS”的现场讲解员，不是规则模板生成器。',
+    '请用自然中文回答，像在给参赛同学做现场讲解。',
+    '不要输出 JSON，不要复述固定四栏模板，不要机械罗列指标名。',
+    '不要用“优势 / 风险 / 建议”当成固定标题；可以直接给判断、证据和下一步建议。',
+    '要结合当前地图上下文，优先引用图层、热力、天气、空气和评分证据。',
+    '如果是首次分析，请给出一段简明但有判断力的讲解，结尾留 1 个最有价值的追问方向。',
+    '如果是追问，请直接回答问题，必要时结合当前上下文补充证据。',
+    '回答长度控制在 140 到 320 个汉字之间，除非用户明确要详细展开。',
+  ].join('\n');
+
+  const contextPrompt = `当前地图上下文：\n${buildMapContextSummary(payload)}`;
+  const conversation = sanitizeConversation(payload.messages);
+
+  return [
+    { role: 'system', content: systemPrompt },
+    { role: 'system', content: contextPrompt },
+    ...(conversation.length
+      ? conversation
+      : [
+          {
+            role: 'user',
+            content:
+              initialPrompt ||
+              '请基于当前地图上下文，给出这片区域对当前画像的 AI 讲解。请先说结论，再说明证据，最后留一个可继续追问的问题。',
+          },
+        ]),
+  ];
+}
+
+async function callAiConversation(payload) {
+  if (!config.ai.key) throw new Error('AI_API_KEY 未配置');
 
   const timeout = withTimeout(config.ai.timeoutMs);
   try {
@@ -141,19 +203,9 @@ async function callAiExplanation(payload, fallback) {
       },
       body: JSON.stringify({
         model: config.ai.model,
-        temperature: 0.2,
-        max_tokens: 700,
-        messages: [
-          {
-            role: 'system',
-            content:
-              '你是南宁绿城知境 WebGIS 的环境评估解释器。请只输出 JSON，字段为 summary、strengths、risks、advice。解释必须基于输入的真实 API 数据和空间评分，不得编造监测来源。',
-          },
-          {
-            role: 'user',
-            content: JSON.stringify(payload),
-          },
-        ],
+        temperature: 0.35,
+        max_tokens: 800,
+        messages: buildAiMessages(payload),
       }),
       signal: timeout.signal,
     });
@@ -162,9 +214,17 @@ async function callAiExplanation(payload, fallback) {
       const text = await response.text().catch(() => '');
       throw new Error(`AI API ${response.status}${text ? `: ${text.slice(0, 240)}` : ''}`);
     }
+
     const data = await response.json();
-    const text = data.choices?.[0]?.message?.content ?? '';
-    return normalizeAiExplanation(text, fallback);
+    const content = String(data.choices?.[0]?.message?.content ?? '').trim();
+    if (!content) {
+      throw new Error('AI API 未返回有效内容');
+    }
+    return {
+      provider: 'ai',
+      mode: 'ai',
+      content,
+    };
   } finally {
     timeout.done();
   }
@@ -172,20 +232,63 @@ async function callAiExplanation(payload, fallback) {
 
 async function handleExplain(request, response) {
   const payload = await readBody(request);
+  if (payload.mode === 'ai') {
+    const conversation = sanitizeConversation(payload.messages);
+    const cacheable = conversation.length === 0;
+    const cacheKey = hashPayload({
+      mode: 'ai',
+      profile: payload.profile?.key ?? payload.profileKey,
+      location: payload.location,
+      assessment: payload.assessment,
+      environment: payload.environment,
+      locationContext: payload.locationContext,
+      mapState: payload.mapState,
+      model: config.ai.key ? config.ai.model : 'rule',
+    });
+
+    if (cacheable && config.ai.key) {
+      const cached = await readExplanationCache(cacheKey);
+      if (cached && cached.provider === 'ai' && cached.mode === 'ai') {
+        sendJson(response, 200, {
+          ok: true,
+          cached: true,
+          explanation: cached,
+        });
+        return;
+      }
+    }
+
+    const explanation = await callAiConversation(payload);
+
+    if (explanation.provider === 'ai' && cacheable) {
+      await writeExplanationCache({
+        cacheKey,
+        provider: explanation.provider,
+        model: config.ai.model,
+        explanation,
+      });
+    }
+
+    sendJson(response, 200, {
+      ok: true,
+      cached: false,
+      explanation,
+    });
+    return;
+  }
+
   const fallback = buildRuleExplanation(payload);
   const cacheKey = hashPayload({
+    mode: 'rule',
     profile: payload.profile?.key ?? payload.profileKey,
     location: payload.location,
     assessment: payload.assessment,
     environment: payload.environment,
     locationContext: payload.locationContext,
-    model: config.ai.key ? config.ai.model : 'rule',
   });
 
   const cached = await readExplanationCache(cacheKey);
-  const cachedIsFailedAiFallback =
-    config.ai.key && cached?.provider === 'rule' && String(cached?.note ?? '').includes('AI API 暂不可用');
-  if (cached && !cachedIsFailedAiFallback) {
+  if (cached) {
     sendJson(response, 200, {
       ok: true,
       cached: true,
@@ -194,25 +297,13 @@ async function handleExplain(request, response) {
     return;
   }
 
-  let explanation = fallback;
-  try {
-    explanation = await callAiExplanation(payload, fallback);
-  } catch (error) {
-    explanation = {
-      ...fallback,
-      provider: 'rule',
-      note: `AI API 暂不可用，已使用规则式解释：${error instanceof Error ? error.message : 'unknown error'}`,
-    };
-  }
-
-  if (explanation.provider === 'ai' || !config.ai.key) {
-    await writeExplanationCache({
-      cacheKey,
-      provider: explanation.provider ?? 'rule',
-      model: explanation.provider === 'ai' ? config.ai.model : null,
-      explanation,
-    });
-  }
+  const explanation = fallback;
+  await writeExplanationCache({
+    cacheKey,
+    provider: 'rule',
+    model: null,
+    explanation,
+  });
 
   await writeEvaluationRecord({
     profileKey: payload.profile?.key ?? payload.profileKey ?? 'unknown',

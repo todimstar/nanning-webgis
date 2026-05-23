@@ -28,11 +28,31 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  explanationMode: {
+    type: String,
+    default: 'rule',
+  },
   explanationLoading: {
     type: Boolean,
     default: false,
   },
   explanationNotice: {
+    type: String,
+    default: '',
+  },
+  aiConversation: {
+    type: Object,
+    default: () => ({ messages: [], context: null }),
+  },
+  aiDraft: {
+    type: String,
+    default: '',
+  },
+  aiNotice: {
+    type: String,
+    default: '',
+  },
+  aiError: {
     type: String,
     default: '',
   },
@@ -58,9 +78,21 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits([
+  'update:explanationMode',
+  'update:aiDraft',
+  'send-ai-question',
+  'new-ai-conversation',
+  'start-ai-conversation',
+]);
+
 function valueOrDash(value, unit = '') {
   if (value === null || value === undefined || Number.isNaN(value)) return '--';
   return `${Number(value).toFixed(1)}${unit}`;
+}
+
+function listToText(items = []) {
+  return items.filter(Boolean).join('、') || '无';
 }
 
 const trendSamples = computed(() => {
@@ -76,6 +108,50 @@ const trendMax = computed(() => {
   const values = trendSamples.value.flatMap((item) => [item.temperature, item.pm25]);
   return Math.max(1, ...values);
 });
+
+const aiMessages = computed(() =>
+  (props.aiConversation?.messages ?? []).filter(
+    (message) => message?.role === 'user' || message?.role === 'assistant',
+  ),
+);
+
+const aiContextSummary = computed(() => {
+  const context = props.aiConversation?.context;
+  if (!context) return [];
+
+  const visibleLayers = (context.mapState?.visibleLayers ?? []).map((item) => item?.label || item?.key);
+  const activeHeatmaps = (context.mapState?.activeHeatmaps ?? []).map((item) => item?.label || item?.key);
+  const weather = context.environment?.weather ?? {};
+  const air = context.environment?.air ?? {};
+
+  return [
+    context.mapState?.baseLayerLabel || context.mapState?.baseLayerKey || '底图未定',
+    `图层 ${listToText(visibleLayers)}`,
+    `热力 ${listToText(activeHeatmaps)}`,
+    `天气 ${valueOrDash(weather.temperature2m, '°C')} / 湿度 ${valueOrDash(weather.relativeHumidity2m, '%')}`,
+    `空气 ${valueOrDash(air.pm25)} / AQI ${valueOrDash(air.aqi)}`,
+  ];
+});
+
+function setExplanationMode(mode) {
+  emit('update:explanationMode', mode);
+}
+
+function setAiDraft(event) {
+  emit('update:aiDraft', event.target.value);
+}
+
+function submitAiQuestion() {
+  emit('send-ai-question');
+}
+
+function startAiConversation() {
+  emit('start-ai-conversation');
+}
+
+function createNewAiConversation() {
+  emit('new-ai-conversation');
+}
 
 async function exportHtmlReport() {
   if (!props.assessment || !props.environment || !props.explanation) return;
@@ -104,7 +180,7 @@ async function exportHtmlReport() {
 </script>
 
 <template>
-  <section class="analysis">
+  <section class="analysis" :class="{ 'analysis--ai': explanationMode === 'ai' }">
     <div class="analysis-header">
       <div>
         <p class="eyebrow">当前评估点</p>
@@ -132,7 +208,7 @@ async function exportHtmlReport() {
         导出 HTML 评估摘要
       </button>
 
-      <div class="metric-grid">
+      <div v-if="explanationMode === 'rule'" class="metric-grid">
         <article>
           <span>温度</span>
           <strong>{{ valueOrDash(environment.weather?.temperature2m, '°C') }}</strong>
@@ -175,7 +251,7 @@ async function exportHtmlReport() {
         </article>
       </div>
 
-      <section class="data-block">
+      <section v-if="explanationMode === 'rule'" class="data-block">
         <h2>{{ queryRadiusMeters }} 米空间查询</h2>
         <div class="nearby-grid">
           <article>
@@ -201,19 +277,19 @@ async function exportHtmlReport() {
         </div>
       </section>
 
-      <section v-if="selectedFeature" class="data-block feature-block">
+      <section v-if="explanationMode === 'rule' && selectedFeature" class="data-block feature-block">
         <h2>点选要素</h2>
         <p><strong>{{ selectedFeature.name }}</strong> · {{ selectedFeature.category }}</p>
         <p v-if="selectedFeature.cultureText">{{ selectedFeature.cultureText }}</p>
         <p v-if="selectedFeature.score !== null">参考评分：{{ selectedFeature.score }}</p>
       </section>
 
-      <section v-if="toolResult" class="data-block tool-result-block">
+      <section v-if="explanationMode === 'rule' && toolResult" class="data-block tool-result-block">
         <h2>工具结果</h2>
         <p>{{ toolResult.message }}</p>
       </section>
 
-      <section class="data-block">
+      <section v-if="explanationMode === 'rule'" class="data-block">
         <h2>指标评分</h2>
         <div class="bars">
           <div
@@ -231,14 +307,78 @@ async function exportHtmlReport() {
       </section>
 
       <section class="data-block explanation-block">
-        <h2>规则式 AI 解释</h2>
-        <div v-if="explanationNotice" class="explanation-notice">
-          {{ explanationLoading ? '生成中：' : '' }}{{ explanationNotice }}
+        <div class="explanation-topbar">
+          <div>
+            <h2>{{ explanationMode === 'ai' ? 'AI 解释' : '规则式解释' }}</h2>
+          </div>
+          <div class="mode-switch">
+            <button
+              type="button"
+              :class="{ active: explanationMode === 'rule' }"
+              @click="setExplanationMode('rule')"
+            >
+              规则式
+            </button>
+            <button
+              type="button"
+              :class="{ active: explanationMode === 'ai' }"
+              @click="setExplanationMode('ai')"
+            >
+              AI 解释
+            </button>
+          </div>
         </div>
-        <p class="explain-summary">{{ explanation.summary }}</p>
-        <p><strong>优势：</strong>{{ explanation.strengths }}</p>
-        <p><strong>风险：</strong>{{ explanation.risks }}</p>
-        <p><strong>建议：</strong>{{ explanation.advice }}</p>
+
+        <div v-if="explanationMode === 'rule'">
+          <div v-if="explanationNotice" class="explanation-notice">
+            {{ explanationLoading ? '生成中：' : '' }}{{ explanationNotice }}
+          </div>
+          <p class="explain-summary">{{ explanation.summary }}</p>
+          <p><strong>优势：</strong>{{ explanation.strengths }}</p>
+          <p><strong>风险：</strong>{{ explanation.risks }}</p>
+          <p><strong>建议：</strong>{{ explanation.advice }}</p>
+        </div>
+
+        <div v-else class="ai-panel">
+          <div v-if="explanationLoading" class="loading-card">AI 正在结合当前地图上下文生成回答...</div>
+          <div v-else-if="aiError" class="notice">{{ aiError }}</div>
+          <div v-else-if="aiNotice" class="explanation-notice">{{ aiNotice }}</div>
+
+          <div class="ai-context-summary">
+            <span v-for="item in aiContextSummary" :key="item" class="context-chip">{{ item }}</span>
+          </div>
+
+          <div class="ai-thread">
+            <div v-if="!aiMessages.length" class="ai-empty">等待 AI 回复</div>
+            <article
+              v-for="message in aiMessages"
+              :key="message.id"
+              class="ai-message"
+              :class="message.role"
+            >
+              <span class="message-role">{{ message.role === 'user' ? '你' : 'AI' }}</span>
+              <p>{{ message.content }}</p>
+            </article>
+          </div>
+
+          <form class="ai-composer" @submit.prevent="submitAiQuestion">
+            <textarea
+              :value="aiDraft"
+              rows="4"
+              placeholder="追问当前点位的细节"
+              @input="setAiDraft"
+            ></textarea>
+            <div class="composer-actions">
+              <button type="button" :disabled="explanationLoading" @click="startAiConversation">
+                开始 / 重试
+              </button>
+              <button type="button" :disabled="explanationLoading" @click="createNewAiConversation">
+                新对话
+              </button>
+              <button type="submit" :disabled="!aiDraft.trim() || explanationLoading">发送</button>
+            </div>
+          </form>
+        </div>
       </section>
 
       <section class="data-block trend-block">

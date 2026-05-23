@@ -32,6 +32,10 @@ export async function requestAiExplanation(payload) {
   });
 }
 
+export async function requestAssistantReply(payload) {
+  return requestAiExplanation(payload);
+}
+
 export async function saveReport(payload) {
   return requestJson('/api/reports', {
     method: 'POST',

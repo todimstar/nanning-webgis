@@ -5,15 +5,17 @@ import ProfileSelector from './components/ProfileSelector.vue';
 import LayerPanel from './components/LayerPanel.vue';
 import ToolPanel from './components/ToolPanel.vue';
 import AnalysisPanel from './components/AnalysisPanel.vue';
-import { fetchAmapRegeocode, requestAiExplanation } from './api/backend.js';
+import { fetchAmapRegeocode, requestAssistantReply } from './api/backend.js';
 import { fetchEnvironment } from './api/openMeteo.js';
 import { DEFAULT_SCORE_CONFIG, computeAssessment } from './model/scoreModel.js';
 import { buildExplanation } from './model/explainModel.js';
 import {
   NANNING_CENTER,
+  OVERLAY_LAYER_DEFS,
   createDefaultOverlayState,
   loadGreenCityCollections,
 } from './data/greenCityData.js';
+import { BASE_LAYER_OPTIONS } from './gis/baseLayers.js';
 
 const scoreConfig = ref(DEFAULT_SCORE_CONFIG);
 const selectedProfile = ref('green');
@@ -22,9 +24,13 @@ const environment = ref(null);
 const greenCityData = ref({});
 const selectedFeature = ref(null);
 const locationContext = ref(null);
-const explanation = ref(null);
 const explanationLoading = ref(false);
 const explanationNotice = ref('');
+const explanationMode = ref('rule');
+const aiConversation = ref(loadAiConversation());
+const aiDraft = ref('');
+const aiNotice = ref('');
+const aiError = ref('');
 const loading = ref(false);
 const apiError = ref('');
 const baseLayerKey = ref('amap');
@@ -37,6 +43,17 @@ const queryRadiusMeters = ref(900);
 const activeTool = ref('inspect');
 const toolCommand = ref({ id: 0, type: '' });
 const toolResult = ref(null);
+const aiOpeningPrompt =
+  '请基于当前地图上下文给出第一次 AI 讲解，结合图层、热力、天气和评分给出判断，并在结尾留一个最有价值的追问方向。';
+
+const overlayLabelByKey = Object.fromEntries(OVERLAY_LAYER_DEFS.map((layer) => [layer.key, layer.label]));
+const heatmapLabelByKey = {
+  greenHeatmap: '绿城友好度热力',
+  noiseHeatmap: '噪音风险热力',
+};
+const baseLayerLabelByKey = Object.fromEntries(
+  BASE_LAYER_OPTIONS.map((layer) => [layer.key, layer.label]),
+);
 
 const assessment = computed(() => {
   if (!environment.value) return null;
@@ -64,42 +81,195 @@ const ruleExplanation = computed(() => {
   });
 });
 
-let explanationRequestId = 0;
+const aiContextSnapshot = computed(() => {
+  if (!assessment.value || !environment.value) return null;
+  return buildAiContextSnapshot();
+});
 
-async function refreshExplanation() {
-  const fallback = ruleExplanation.value;
-  if (!fallback || !assessment.value) {
-    explanation.value = null;
+function createEmptyAiConversation() {
+  return {
+    id: crypto.randomUUID?.() ?? `ai-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    context: null,
+    messages: [],
+  };
+}
+
+function loadAiConversation() {
+  if (typeof window === 'undefined') return createEmptyAiConversation();
+  try {
+    const raw = window.localStorage.getItem('green-city-ai-conversation-v1');
+    if (!raw) return createEmptyAiConversation();
+    const parsed = JSON.parse(raw);
+    if (!parsed?.id || !Array.isArray(parsed.messages)) return createEmptyAiConversation();
+    return parsed;
+  } catch (error) {
+    console.warn('AI 会话读取失败：', error);
+    return createEmptyAiConversation();
+  }
+}
+
+function saveAiConversation() {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem('green-city-ai-conversation-v1', JSON.stringify(aiConversation.value));
+  } catch (error) {
+    console.warn('AI 会话保存失败：', error);
+  }
+}
+
+function buildAiContextSnapshot() {
+  const visibleLayers = Object.entries(overlayState.value)
+    .filter(([, state]) => state?.visible)
+    .map(([key, state]) => ({
+      key,
+      label: overlayLabelByKey[key] ?? key,
+      opacity: Number(state?.opacity ?? 1),
+    }));
+  const activeHeatmaps = Object.entries(heatmapState.value)
+    .filter(([, state]) => state?.visible)
+    .map(([key]) => ({
+      key,
+      label: heatmapLabelByKey[key] ?? key,
+    }));
+  const baseLayerLabel = baseLayerLabelByKey[baseLayerKey.value] ?? baseLayerKey.value;
+  return {
+    location: { ...selectedLocation.value },
+    locationContext: locationContext.value ? { ...locationContext.value } : null,
+    profile: { ...activeProfile.value },
+    environment: environment.value ? JSON.parse(JSON.stringify(environment.value)) : null,
+    assessment: assessment.value ? JSON.parse(JSON.stringify(assessment.value)) : null,
+    mapState: {
+      baseLayerKey: baseLayerKey.value,
+      baseLayerLabel,
+      queryRadiusMeters: queryRadiusMeters.value,
+      overlayState: JSON.parse(JSON.stringify(overlayState.value)),
+      heatmapState: JSON.parse(JSON.stringify(heatmapState.value)),
+      visibleLayers,
+      activeHeatmaps,
+    },
+    selectedFeature: selectedFeature.value ? JSON.parse(JSON.stringify(selectedFeature.value)) : null,
+    toolResult: toolResult.value ? JSON.parse(JSON.stringify(toolResult.value)) : null,
+  };
+}
+
+function replaceAiSystemContext(contextSnapshot) {
+  aiConversation.value.context = contextSnapshot;
+  aiConversation.value.updatedAt = new Date().toISOString();
+  saveAiConversation();
+}
+
+function stripSystemMessages(messages) {
+  return (messages ?? []).filter((message) => message?.role === 'user' || message?.role === 'assistant');
+}
+
+function appendAiMessage(role, content) {
+  aiConversation.value.messages = [
+    ...stripSystemMessages(aiConversation.value.messages),
+    {
+      id: crypto.randomUUID?.() ?? `msg-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      role,
+      content,
+      createdAt: new Date().toISOString(),
+    },
+  ];
+  aiConversation.value.updatedAt = new Date().toISOString();
+  saveAiConversation();
+}
+
+function resetAiConversation() {
+  aiConversation.value = createEmptyAiConversation();
+  aiDraft.value = '';
+  aiNotice.value = '已开启新的 AI 对话。';
+  aiError.value = '';
+  saveAiConversation();
+}
+
+function hasAiTranscript() {
+  return stripSystemMessages(aiConversation.value.messages).length > 0;
+}
+
+function ensureAiContext() {
+  const snapshot = aiContextSnapshot.value;
+  if (!snapshot) return;
+  replaceAiSystemContext(snapshot);
+}
+
+async function requestAiAnalysis(prompt, overrideMessages = null) {
+  const context = aiConversation.value.context ?? aiContextSnapshot.value;
+  if (!context) {
+    aiError.value = 'AI 上下文尚未准备好';
     return;
   }
 
-  const requestId = ++explanationRequestId;
-  explanation.value = fallback;
   explanationLoading.value = true;
-  explanationNotice.value = '正在请求后端 AI 解释；不可用时自动保留规则式解释。';
+  aiError.value = '';
+  explanationNotice.value = 'AI 正在结合图层、热力、天气和评分回答。';
 
+  const messages = overrideMessages ?? stripSystemMessages(aiConversation.value.messages);
   try {
-    const result = await requestAiExplanation({
-      location: selectedLocation.value,
-      profile: activeProfile.value,
-      environment: environment.value,
-      assessment: assessment.value,
-      locationContext: locationContext.value,
+    const result = await requestAssistantReply({
+      mode: 'ai',
+      location: context.location,
+      profile: context.profile,
+      environment: context.environment,
+      assessment: context.assessment,
+      locationContext: context.locationContext,
+      mapState: context.mapState,
+      selectedFeature: context.selectedFeature,
+      toolResult: context.toolResult,
+      messages,
+      prompt,
     });
-    if (requestId !== explanationRequestId) return;
-    explanation.value = result.explanation ?? fallback;
-    explanationNotice.value =
-      result.explanation?.provider === 'ai'
-        ? '已接入后端 AI API 生成解释。'
-        : result.explanation?.note || 'AI API 未配置或暂不可用，当前使用后端规则式解释。';
+    const content = result.explanation?.content || result.explanation?.summary || 'AI 暂未返回内容。';
+    if (!messages.length || !hasAiTranscript()) {
+      aiConversation.value.messages = [
+        {
+          id: crypto.randomUUID?.() ?? `msg-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+          role: 'assistant',
+          content,
+          createdAt: new Date().toISOString(),
+        },
+      ];
+    } else {
+      appendAiMessage('assistant', content);
+    }
+    aiNotice.value = result.explanation?.note || '已获取 AI 讲解。';
+    saveAiConversation();
   } catch (error) {
-    if (requestId !== explanationRequestId) return;
-    console.warn('后端解释接口不可用，使用前端规则式解释：', error);
-    explanation.value = fallback;
-    explanationNotice.value = '后端解释接口不可用，当前使用前端规则式解释。';
+    console.warn('AI 追问失败：', error);
+    aiError.value = error instanceof Error ? error.message : 'AI 请求失败';
+    aiNotice.value = 'AI 请求暂不可用，当前保持浏览器内对话。';
   } finally {
-    if (requestId === explanationRequestId) explanationLoading.value = false;
+    explanationLoading.value = false;
   }
+}
+
+async function startAiConversation() {
+  ensureAiContext();
+  if (!aiConversation.value.context && !aiContextSnapshot.value) {
+    aiNotice.value = '地图数据仍在加载，请稍后再试。';
+    return;
+  }
+  await requestAiAnalysis(aiOpeningPrompt, []);
+}
+
+async function beginNewAiConversation() {
+  resetAiConversation();
+  ensureAiContext();
+  if (explanationMode.value === 'ai') {
+    await startAiConversation();
+  }
+}
+
+async function sendAiQuestion() {
+  const question = aiDraft.value.trim();
+  if (!question) return;
+  ensureAiContext();
+  appendAiMessage('user', question);
+  aiDraft.value = '';
+  await requestAiAnalysis(question);
 }
 
 async function loadScoreConfig() {
@@ -166,8 +336,33 @@ async function loadLayerData() {
   }
 }
 
-watch([ruleExplanation, locationContext], () => {
-  refreshExplanation();
+watch(
+  [aiContextSnapshot, loading],
+  ([snapshot, isLoading]) => {
+    if (!snapshot) return;
+    replaceAiSystemContext(snapshot);
+    if (explanationMode.value === 'ai' && !hasAiTranscript() && !explanationLoading.value && !isLoading) {
+      void startAiConversation();
+    }
+  },
+  { immediate: true, deep: true },
+);
+
+watch(explanationMode, (mode) => {
+  if (mode === 'rule') {
+    aiNotice.value = '';
+    aiError.value = '';
+    explanationLoading.value = false;
+    return;
+  }
+
+  ensureAiContext();
+  if (!hasAiTranscript() && aiContextSnapshot.value && !loading.value && !explanationLoading.value) {
+    void startAiConversation();
+    return;
+  }
+
+  aiNotice.value = loading.value ? '地图数据仍在加载，完成后会自动开始 AI 讲解。' : 'AI 解释已开启，可继续追问。';
 });
 
 onMounted(async () => {
@@ -230,19 +425,27 @@ onMounted(async () => {
 
     <aside class="side-panel right-panel">
       <AnalysisPanel
+        v-model:explanation-mode="explanationMode"
+        v-model:ai-draft="aiDraft"
         :location="selectedLocation"
         :location-context="locationContext"
         :profile="activeProfile"
         :environment="environment"
         :assessment="assessment"
-        :explanation="explanation"
+        :explanation="ruleExplanation"
         :explanation-loading="explanationLoading"
         :explanation-notice="explanationNotice"
+        :ai-conversation="aiConversation"
+        :ai-error="aiError"
+        :ai-notice="aiNotice"
         :selected-feature="selectedFeature"
         :query-radius-meters="queryRadiusMeters"
         :tool-result="toolResult"
         :loading="loading"
         :api-error="apiError"
+        @send-ai-question="sendAiQuestion"
+        @new-ai-conversation="beginNewAiConversation"
+        @start-ai-conversation="startAiConversation"
       />
     </aside>
   </div>

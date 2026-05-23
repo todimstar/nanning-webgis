@@ -25,7 +25,7 @@ npm run start
 
 - `GET /health`
 - `GET /api/amap/regeocode?lon=108.3669&lat=22.8170`
-- `POST /api/explain`
+- `POST /api/explain`，`mode: "rule"` 返回规则式摘要，`mode: "ai"` 返回聊天式 AI 讲解
 - `POST /api/reports`
 
 ## MySQL
