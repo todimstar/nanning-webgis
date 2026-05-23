@@ -91,7 +91,7 @@ async function refreshExplanation() {
     explanationNotice.value =
       result.explanation?.provider === 'ai'
         ? '已接入后端 AI API 生成解释。'
-        : 'AI API 未配置或暂不可用，当前使用后端规则式解释。';
+        : result.explanation?.note || 'AI API 未配置或暂不可用，当前使用后端规则式解释。';
   } catch (error) {
     if (requestId !== explanationRequestId) return;
     console.warn('后端解释接口不可用，使用前端规则式解释：', error);

@@ -17,6 +17,10 @@ npm run start
 - 仓库根目录 `高德key.txt`
 - 仓库上一级目录 `高德key.txt`
 
+`AI_API_BASE_URL` 可以填写服务根地址，例如 `https://api.siliconflow.cn`，也可以填写完整的 OpenAI-compatible chat completions 地址，例如 `https://api.siliconflow.cn/v1/chat/completions`。后端会自动归一化。
+
+如果 SiliconFlow 某个模型返回余额不足或无权限，可以先使用轻量模型，例如 `deepseek-ai/DeepSeek-V4-Flash`，确认链路打通后再切换到更大的模型。
+
 常用接口：
 
 - `GET /health`

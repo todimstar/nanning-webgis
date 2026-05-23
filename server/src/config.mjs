@@ -47,6 +47,7 @@ export const config = {
     baseUrl: (process.env.AI_API_BASE_URL || 'https://api.openai.com').replace(/\/$/, ''),
     key: process.env.AI_API_KEY || '',
     model: process.env.AI_MODEL || 'gpt-4o-mini',
+    timeoutMs: Number(process.env.AI_API_TIMEOUT_MS || 45000),
   },
   mysql: {
     host: process.env.MYSQL_HOST || '',

@@ -100,23 +100,40 @@ async function handleAmapRegeocode(url, response) {
 
 function normalizeAiExplanation(text, fallback) {
   const match = text.match(/\{[\s\S]*\}/);
-  if (!match) return fallback;
-  const parsed = JSON.parse(match[0]);
+  if (match) {
+    const parsed = JSON.parse(match[0]);
+    return {
+      provider: 'ai',
+      summary: String(parsed.summary || fallback.summary),
+      strengths: String(parsed.strengths || fallback.strengths),
+      risks: String(parsed.risks || fallback.risks),
+      advice: String(parsed.advice || fallback.advice),
+    };
+  }
+
+  const cleanText = String(text || '').trim();
   return {
     provider: 'ai',
-    summary: String(parsed.summary || fallback.summary),
-    strengths: String(parsed.strengths || fallback.strengths),
-    risks: String(parsed.risks || fallback.risks),
-    advice: String(parsed.advice || fallback.advice),
+    summary: cleanText || fallback.summary,
+    strengths: fallback.strengths,
+    risks: fallback.risks,
+    advice: fallback.advice,
   };
+}
+
+function buildAiChatCompletionsUrl() {
+  const baseUrl = config.ai.baseUrl.replace(/\/$/, '');
+  if (baseUrl.endsWith('/chat/completions')) return baseUrl;
+  if (baseUrl.endsWith('/v1')) return `${baseUrl}/chat/completions`;
+  return `${baseUrl}/v1/chat/completions`;
 }
 
 async function callAiExplanation(payload, fallback) {
   if (!config.ai.key) return fallback;
 
-  const timeout = withTimeout(18000);
+  const timeout = withTimeout(config.ai.timeoutMs);
   try {
-    const response = await fetch(`${config.ai.baseUrl}/v1/chat/completions`, {
+    const response = await fetch(buildAiChatCompletionsUrl(), {
       method: 'POST',
       headers: {
         authorization: `Bearer ${config.ai.key}`,
@@ -125,6 +142,7 @@ async function callAiExplanation(payload, fallback) {
       body: JSON.stringify({
         model: config.ai.model,
         temperature: 0.2,
+        max_tokens: 700,
         messages: [
           {
             role: 'system',
@@ -140,7 +158,10 @@ async function callAiExplanation(payload, fallback) {
       signal: timeout.signal,
     });
 
-    if (!response.ok) throw new Error(`AI API ${response.status}`);
+    if (!response.ok) {
+      const text = await response.text().catch(() => '');
+      throw new Error(`AI API ${response.status}${text ? `: ${text.slice(0, 240)}` : ''}`);
+    }
     const data = await response.json();
     const text = data.choices?.[0]?.message?.content ?? '';
     return normalizeAiExplanation(text, fallback);
@@ -162,7 +183,9 @@ async function handleExplain(request, response) {
   });
 
   const cached = await readExplanationCache(cacheKey);
-  if (cached) {
+  const cachedIsFailedAiFallback =
+    config.ai.key && cached?.provider === 'rule' && String(cached?.note ?? '').includes('AI API 暂不可用');
+  if (cached && !cachedIsFailedAiFallback) {
     sendJson(response, 200, {
       ok: true,
       cached: true,
@@ -182,12 +205,14 @@ async function handleExplain(request, response) {
     };
   }
 
-  await writeExplanationCache({
-    cacheKey,
-    provider: explanation.provider ?? 'rule',
-    model: explanation.provider === 'ai' ? config.ai.model : null,
-    explanation,
-  });
+  if (explanation.provider === 'ai' || !config.ai.key) {
+    await writeExplanationCache({
+      cacheKey,
+      provider: explanation.provider ?? 'rule',
+      model: explanation.provider === 'ai' ? config.ai.model : null,
+      explanation,
+    });
+  }
 
   await writeEvaluationRecord({
     profileKey: payload.profile?.key ?? payload.profileKey ?? 'unknown',
